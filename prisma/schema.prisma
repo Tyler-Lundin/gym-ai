@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or your preferred database
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @unique @default(cuid())
+  name          String
+  email         String          @unique
+  createdAt     DateTime        @default(now())
+  workouts      Workout[]
+  cycles        Cycle[]
+  Periodization Periodization[]
+  Goal          Goal[]
+}
+
+model Exercise {
+  id              String          @id @default(cuid())
+  name            String // e.g., "Bench Press"
+  category        String // e.g., "Strength", "Cardio"
+  description     String? // e.g., "A compound exercise targeting the chest."
+  musclesTargeted String[] // e.g., ["Chest", "Triceps", "Shoulders"]
+  equipment       String? // e.g., "Barbell, Dumbbells"
+  createdAt       DateTime        @default(now())
+  exerciseEntries ExerciseEntry[]
+}
+
+model Workout {
+  id              String          @id @default(cuid())
+  name            String // e.g., "Upper Body Day"
+  date            DateTime        @default(now())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  exerciseEntries ExerciseEntry[]
+  cycleId         String?
+  cycle           Cycle?          @relation(fields: [cycleId], references: [id])
+  notes           String? // General notes about the workout
+  metadata        Json? // Structured data for APIs like ChatGPT (e.g., {duration: 90, intensity: "high"})
+}
+
+model ExerciseEntry {
+  id         String   @id @default(cuid())
+  workoutId  String
+  workout    Workout  @relation(fields: [workoutId], references: [id])
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  sets       Int
+  reps       Int
+  weight     Float? // Optional, for exercises involving weight
+  duration   Int? // Optional, for exercises like running (in seconds)
+  restTime   Int? // Rest between sets (in seconds)
+  notes      String? // Any additional notes for this specific entry
+  metadata   Json? // Structured data for external systems (e.g., AI feedback)
+}
+
+model Cycle {
+  id              String         @id @default(cuid())
+  name            String // e.g., "Hypertrophy Phase"
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  startDate       DateTime
+  endDate         DateTime?
+  period          String // e.g., "Strength", "Endurance", "Cutting"
+  phase           String // e.g., "Phase 1", "Phase 2"
+  workouts        Workout[]
+  notes           String? // Notes for the cycle
+  metadata        Json? // Structured data for tracking progress
+  Periodization   Periodization? @relation(fields: [periodizationId], references: [id])
+  periodizationId String?
+}
+
+model Periodization {
+  id          String    @id @default(cuid())
+  name        String // e.g., "12-Week Training Plan"
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  cycles      Cycle[]
+  description String? // e.g., "Plan focused on strength and hypertrophy."
+  startDate   DateTime
+  endDate     DateTime?
+  metadata    Json? // Additional data for analysis or API integration
+}
+
+model Goal {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  description String // e.g., "Increase 1RM Bench Press by 10%"
+  targetDate  DateTime
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  metadata    Json? // Custom data for progress tracking or AI integration
+}
