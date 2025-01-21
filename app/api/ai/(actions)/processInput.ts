@@ -17,6 +17,33 @@ export const processInputSchema = z.object({
     "suggest",
     "analyze",
   ]),
+  workout: z
+    .object({
+      workoutName: z.string(),
+      date: z.date(),
+      notes: z.string(),
+    })
+    .optional(),
+  exercise: z
+    .object({
+      exerciseName: z.string(),
+      category: z.string(),
+      description: z.string(),
+      musclesTargeted: z.array(z.string()),
+      equipment: z.array(z.string()),
+      weight: z.number().optional(),
+      reps: z.number().optional(),
+      intensity: z.number().min(0).max(10).optional(),
+      rir: z.number().optional(),
+      duration: z.number().optional(),
+      restTime: z.number().optional(),
+      notes: z.string().optional(),
+    })
+    .optional(),
+  period: z.object({}).optional(),
+  cycle: z.object({}).optional(),
+  goal: z.object({}).optional(),
+  user: z.object({}).optional(),
 });
 
 export async function processInput(prompt: string | null) {
@@ -31,22 +58,5 @@ export async function processInput(prompt: string | null) {
     schema: processInputSchema,
   });
 
-  switch (object.actionKey) {
-    case actions.REJECT:
-      return { result: "Prompt rejected." };
-    case actions.CREATE:
-    // return await handleCreate(object);
-    case actions.READ:
-    // return await handleRead(object);
-    case actions.UPDATE:
-    // return await handleUpdate(object);
-    case actions.DELETE:
-    // return await handleDelete(object);
-    case actions.SUGGEST:
-    // return await handleSuggest(object);
-    case actions.ANALYZE:
-    // return await handleAnalyze(object);
-    default:
-      throw new Error("Unknown action type");
-  }
+  console.log("Object:", object);
 }

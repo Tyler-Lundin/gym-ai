@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useAtom } from "jotai";
 import { useMutation } from "react-query";
 import { dashboardState } from "@/app/atoms";
-import { prefix } from "../dashboard";
+import { prefix } from "../(hooks)/useDashboard";
 
 async function sendMessage({
   prompt,
@@ -40,16 +40,16 @@ export default function TextBox() {
   });
 
   function handleSend() {
-    const newEntry = { rawInput: inputValue, timestamp: new Date() };
+    const timestamp = new Date();
+    const entryKey = `${prefix}${timestamp.getTime()}`;
+    const newEntry = { rawInput: inputValue, timestamp, entryKey };
+
     setDashboardState((prev) => ({
       ...prev,
       localEntries: [...prev.localEntries, newEntry],
     }));
     updateState("inputValue", "");
-    localStorage.setItem(
-      `${prefix}${newEntry.timestamp.getTime()}`,
-      JSON.stringify(newEntry),
-    );
+    localStorage.setItem(entryKey, JSON.stringify(newEntry));
 
     mutation.mutate({ prompt: inputValue, workoutId: workoutId || "" });
     console.log("SENDING: ", inputValue);

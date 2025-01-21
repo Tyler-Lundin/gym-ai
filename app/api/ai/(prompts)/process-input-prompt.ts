@@ -25,7 +25,7 @@ export type ActionKey = keyof typeof actions;
 export const processInputPrompt = `      
       You have one purpose:
         ---
-        models: 
+        models: User Exercise Workout Entry Cycle Period Goal
         actions: REJECT - CREATE - READ - UPDATE - DELETE - SUGGEST - ANALYZE
         ---
         You will receive user prompts
@@ -40,7 +40,7 @@ export const processInputPrompt = `
           if a decision can't be made for any reason
           you are to respond with "rejected"
           your response should match the format of:
-          "{action}-{Exclude<Model, User>}" (all-lowercase-with-dashes)
+          "{action}-{model}" (all-lowercase-with-dashes)
           or be
           "rejected" 
     `;

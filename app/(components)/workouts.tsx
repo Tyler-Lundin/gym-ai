@@ -18,8 +18,6 @@ export default function Workouts() {
     isError,
   } = useQuery(["userId", userId], () => getWorkouts(userId || "", date));
 
-  console.log({ workouts });
-
   if (isLoading) return <h1>LOADING . . .</h1>;
   if (isError) return <h1>ERROR OCCURED!</h1>;
   return (

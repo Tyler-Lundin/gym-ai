@@ -9,15 +9,15 @@ datasource db {
 }
 
 model User {
-  id            String          @id @unique @default(cuid())
-  username      String
-  email         String          @unique
-  createdAt     DateTime        @default(now())
-  workouts      Workout[]
-  cycles        Cycle[]
-  Periodization Periodization[]
-  Goal          Goal[]
-  notes         String[]
+  id        String    @id @unique @default(cuid())
+  username  String
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  workouts  Workout[]
+  cycles    Cycle[]
+  Period    Period[]
+  Goal      Goal[]
+  notes     String[]
 }
 
 model Exercise {
@@ -51,8 +51,9 @@ model Entry {
   workout    Workout  @relation(fields: [workoutId], references: [id])
   exerciseId String
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  sets       Int
-  reps       Int
+  rawEntry   String
+  sets       Int?
+  reps       Int?
   weight     Float? // Optional, for exercises involving weight
   duration   Int? // Optional, for exercises like running (in seconds)
   restTime   Int? // Rest between sets (in seconds)
@@ -61,22 +62,22 @@ model Entry {
 }
 
 model Cycle {
-  id              String         @id @default(cuid())
-  name            String // e.g., "Hypertrophy Phase"
-  userId          String
-  user            User           @relation(fields: [userId], references: [id])
-  startDate       DateTime
-  endDate         DateTime?
-  period          String // e.g., "Strength", "Endurance", "Cutting"
-  phase           String // e.g., "Phase 1", "Phase 2"
-  workouts        Workout[]
-  notes           String? // Notes for the cycle
-  metadata        Json? // Structured data for tracking progress
-  Periodization   Periodization? @relation(fields: [periodizationId], references: [id])
-  periodizationId String?
+  id        String    @id @default(cuid())
+  name      String // e.g., "Hypertrophy Phase"
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  startDate DateTime
+  endDate   DateTime?
+  period    String // e.g., "Strength", "Endurance", "Cutting"
+  phase     String // e.g., "Phase 1", "Phase 2"
+  workouts  Workout[]
+  notes     String? // Notes for the cycle
+  metadata  Json? // Structured data for tracking progress
+  Period    Period?   @relation(fields: [periodId], references: [id])
+  periodId  String?
 }
 
-model Periodization {
+model Period {
   id          String    @id @default(cuid())
   name        String // e.g., "12-Week Training Plan"
   userId      String
