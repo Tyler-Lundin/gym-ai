@@ -13,9 +13,7 @@ export default function ExerciseEntries({ workoutId }: { workoutId: string }) {
           {/*date && format(date, 'MM-dd-yyyy - hh:mm aa')*/}
         </small>
       </div>
-      <div className="relative gap-8 py-4">
-        <ExerciseEntry entry={} />
-      </div>
+      <div className="relative gap-8 py-4"></div>
     </div>
   );
 }

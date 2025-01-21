@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import { Provider as JotaiProvider } from "jotai";
 
 export const metadata = {
   title: "Welcome to gymai",
@@ -13,9 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className="bg-black">{children}</body>
-      </html>
+      <JotaiProvider>
+        <html lang="en">
+          <body className="bg-black">{children}</body>
+        </html>
+      </JotaiProvider>
     </ClerkProvider>
   );
 }

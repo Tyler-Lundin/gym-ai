@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import { getWorkout, getWorkouts } from "../(actions)/workout-actions";
 import { useAuth } from "@clerk/nextjs";
 import { useAtom } from "jotai";
-import { dashboardState } from "../(dashboard)/dashboard";
+import { dashboardState } from "../atoms";
 
 export default function Workouts() {
   const [{ date }] = useAtom(dashboardState);
@@ -16,7 +16,7 @@ export default function Workouts() {
     data: workouts,
     isLoading,
     isError,
-  } = useQuery(["userId", userId], () => getWorkouts(userId || ""));
+  } = useQuery(["userId", userId], () => getWorkouts(userId || "", date));
 
   console.log({ workouts });
 
@@ -28,13 +28,3 @@ export default function Workouts() {
     </div>
   );
 }
-
-const FAKE_WORKOUT: WorkoutType = {
-  id: "0000001",
-  name: "Push Day",
-  date: new Date(),
-  userId: "00302302030230",
-  cycleId: "30403401420",
-  notes: "I felt very powerful today",
-  metadata: {},
-};

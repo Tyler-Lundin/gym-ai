@@ -2,10 +2,10 @@ import { Workout as WorkoutType } from "@prisma/client";
 import { format } from "date-fns";
 import ExerciseEntries from "./exercise-entries";
 import { useAtom } from "jotai";
-import { dashboardState } from "../(dashboard)/dashboard";
+import { dashboardState } from "../atoms";
 
 export default function Workout({
-  workout: { date, name, metadata, id },
+  workout: { date, workoutName, metadata, id },
 }: {
   workout: WorkoutType;
 }) {
@@ -23,7 +23,7 @@ export default function Workout({
         id="HEADER"
         className="flex relative top-0 right-0 left-0 justify-between items-center pb-4 border-b border-b-black"
       >
-        <h4 className="text-2xl font-bold"> {name} </h4>
+        <h4 className="text-2xl font-bold"> {workoutName} </h4>
         <small className="text-lg">
           {date && format(date, "MM-dd-yyyy - hh:mm aa")}
         </small>

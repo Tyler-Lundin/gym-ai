@@ -3,47 +3,50 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // or your preferred database
-  url      = env("DATABASE_URL")
+  provider  = "postgresql" // or your preferred database
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
   id            String          @id @unique @default(cuid())
-  name          String
+  username      String
   email         String          @unique
   createdAt     DateTime        @default(now())
   workouts      Workout[]
   cycles        Cycle[]
   Periodization Periodization[]
   Goal          Goal[]
+  notes         String[]
 }
 
 model Exercise {
-  id              String          @id @default(cuid())
-  name            String // e.g., "Bench Press"
+  id              String   @id @default(cuid())
+  exerciseName    String // e.g., "Bench Press"
   category        String // e.g., "Strength", "Cardio"
   description     String? // e.g., "A compound exercise targeting the chest."
   musclesTargeted String[] // e.g., ["Chest", "Triceps", "Shoulders"]
   equipment       String? // e.g., "Barbell, Dumbbells"
-  createdAt       DateTime        @default(now())
-  exerciseEntries ExerciseEntry[]
+  createdAt       DateTime @default(now())
+  exerciseEntries Entry[]
 }
 
 model Workout {
-  id              String          @id @default(cuid())
-  name            String // e.g., "Upper Body Day"
-  date            DateTime        @default(now())
-  userId          String
-  user            User            @relation(fields: [userId], references: [id])
-  exerciseEntries ExerciseEntry[]
-  cycleId         String?
-  cycle           Cycle?          @relation(fields: [cycleId], references: [id])
-  notes           String? // General notes about the workout
-  metadata        Json? // Structured data for APIs like ChatGPT (e.g., {duration: 90, intensity: "high"})
+  id          String   @id @default(cuid())
+  workoutName String // e.g., "Upper Body Day"
+  date        DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  entries     Entry[]
+  cycleId     String?
+  cycle       Cycle?   @relation(fields: [cycleId], references: [id])
+  notes       String? // General notes about the workout
+  metadata    Json? // Structured data for APIs like ChatGPT (e.g., {duration: 90, intensity: "high"})
 }
 
-model ExerciseEntry {
+model Entry {
   id         String   @id @default(cuid())
+  rawInput   String
   workoutId  String
   workout    Workout  @relation(fields: [workoutId], references: [id])
   exerciseId String

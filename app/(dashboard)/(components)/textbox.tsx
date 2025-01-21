@@ -1,12 +1,25 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
-import { Enter, Escape, Shift } from "../../(components)/kbd";
 import { useAtom } from "jotai";
-import { dashboardState } from "../dashboard";
 import { useMutation } from "react-query";
-import { createExerciseEntry } from "@/app/(actions)/entry-actions";
-import { Prisma } from "@prisma/client";
+import { dashboardState } from "@/app/atoms";
+import { prefix } from "../dashboard";
+
+async function sendMessage({
+  prompt,
+  workoutId,
+}: {
+  prompt: string;
+  workoutId: string;
+}) {
+  const response = await fetch("/api/ai", {
+    method: "POST",
+    body: JSON.stringify({ prompt, workoutId }),
+  });
+  const result = await response.json();
+  return { response: result };
+}
 
 export default function TextBox() {
   const {
@@ -17,21 +30,33 @@ export default function TextBox() {
     textareaRef,
   } = useTextbox();
   const [{ workoutId }, setDashboardState] = useAtom(dashboardState);
-  const mutation = useMutation(createExerciseEntry, {
+  const mutation = useMutation(sendMessage, {
     onSuccess: (data) => {
-      console.log({ data });
+      console.log("mutation onSuccess ({data}): ", { data });
     },
     onError: (error) => {
-      console.log({ error });
+      console.log("mutation onError ({error}): ", { error });
     },
   });
 
   function handleSend() {
-    mutation.mutate();
+    const newEntry = { rawInput: inputValue, timestamp: new Date() };
+    setDashboardState((prev) => ({
+      ...prev,
+      localEntries: [...prev.localEntries, newEntry],
+    }));
+    updateState("inputValue", "");
+    localStorage.setItem(
+      `${prefix}${newEntry.timestamp.getTime()}`,
+      JSON.stringify(newEntry),
+    );
+
+    mutation.mutate({ prompt: inputValue, workoutId: workoutId || "" });
+    console.log("SENDING: ", inputValue);
   }
 
   return (
-    <div className="grid relative gap-2 py-4 px-4 pb-20 bg-gradient-to-br border shadow-md md:px-8 md:m-4 md:rounded-lg from-black/80 via-black/70 to-black/90 border-green-400/100">
+    <div className="grid relative gap-2 py-4 px-4 pb-20 bg-gradient-to-br border shadow-md md:px-8 md:m-4 md:rounded-lg from-black/80 via-black/70 to-black/90">
       {/* Timestamp */}
       <h6 className="font-thin text-right text-white uppercase">
         {timestamp || "01-23-4567 89:10:11"}
@@ -45,14 +70,20 @@ export default function TextBox() {
             resize: "none",
             overflow: "hidden",
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSend();
+            }
+          }}
           rows={1}
           value={inputValue}
           onInput={calculateLines}
           onFocus={() => updateState("isFocused", true)}
-          onBlur={() => updateState("isFocused", false)}
+          onBlur={() => updateState("isFocused", inputValue === "")}
           onChange={(e) => updateState("inputValue", e.target.value)}
           placeholder="Type here"
-          className="relative z-10 p-2 w-full text-2xl bg-black rounded-l-lg border resize-none focus:outline-none text-white/50 placeholder-white/50 border-white/20 focus:border-white/30 focus:text-white/100"
+          className="relative z-10 p-2 w-full text-2xl bg-black rounded-l-lg border resize-none focus:outline-none text-white/100 placeholder-white/50 border-white/20 focus:border-white/30"
         />
 
         {/* Buttons */}

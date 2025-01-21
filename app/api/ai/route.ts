@@ -1,31 +1,19 @@
-import { getAuth } from "@clerk/nextjs/server";
-import { Exercise, ExerciseEntry, Workout } from "@prisma/client";
-import { NextRequest, NextResponse } from "next/server";
+export const config = {
+  runtime: "edge",
+};
 
-/* 0 - Process Workout
- * 1 - Process Exercise
- * 2 - Unused
- * 3 - Unused
- */
-interface processedInput {
-  case: number;
-  exercise?: Exercise;
-  exerciseEntry?: ExerciseEntry;
-  workout?: Workout;
-}
+import { getAuth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+import { processInput } from "./(actions)/processInput";
+import { postExerciseEntry } from "./(actions)/postExerciseEntry";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  const { input } = await req.json();
-  const { userId } = getAuth(req);
-
-  const processedInput = await processInput(input);
-
-  switch (processedInput.case) {
-    case 0:
-      break;
-    case 1:
-      break;
-    default:
-      break;
+  try {
+    const { prompt, workoutId } = await req.json();
+    const { userId } = getAuth(req);
+    const output = await processInput(prompt || null);
+    return NextResponse.json({ output, success: "/api/ai POST SUCCESS" });
+  } catch (err) {
+    return NextResponse.json({ error: "/api/ai POST FAILED" });
   }
 }

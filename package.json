@@ -9,15 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.1.0",
     "@clerk/nextjs": "^6.9.14",
     "@prisma/client": "^6.2.1",
     "ai": "^4.1.0",
     "date-fns": "^4.1.0",
-    "jotai": "^2.11.0",
+    "jotai": "^2.11.1",
     "next": "15.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-query": "^3.39.3"
+    "react-query": "^3.39.3",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
