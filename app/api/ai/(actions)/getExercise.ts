@@ -2,7 +2,7 @@ import { prisma } from "@/libs/prisma";
 import { Prisma } from "@prisma/client";
 import { Exercise } from "@prisma/client";
 
-export default async function PostExercise(
+export default async function postExercise(
   e: Prisma.ExerciseCreateInput,
 ): Promise<Exercise | null> {
   let exercise;

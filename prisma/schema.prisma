@@ -31,6 +31,13 @@ model Exercise {
   exerciseEntries Entry[]
 }
 
+// model Day {
+//   id          String   @id @default(cuid())
+//   workoutId String
+//   userId      String
+//   goal        String
+// }
+
 model Workout {
   id          String   @id @default(cuid())
   workoutName String // e.g., "Upper Body Day"
@@ -46,12 +53,12 @@ model Workout {
 
 model Entry {
   id         String   @id @default(cuid())
-  rawInput   String
   workoutId  String
+  entryKey   String
+  userId     String
   workout    Workout  @relation(fields: [workoutId], references: [id])
   exerciseId String
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  rawEntry   String
   sets       Int?
   reps       Int?
   weight     Float? // Optional, for exercises involving weight

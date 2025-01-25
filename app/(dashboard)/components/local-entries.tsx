@@ -4,10 +4,12 @@ import { dashboardState } from "@/app/atoms";
 import { useAtom } from "jotai";
 import { format } from "date-fns";
 import { useState } from "react";
-import ContextMenu from "@/app/(components)/context-menu";
+import { useAuth } from "@clerk/nextjs";
+import { useQuery } from "react-query";
+import { getExerciseEntry } from "@/app/(actions)/entry-actions";
 
 export default function LocalEntries() {
-  const [{ localEntries }] = useAtom(dashboardState);
+  const [{ localEntries, workoutId }] = useAtom(dashboardState);
 
   return (
     <div className="grid gap-2 text-black">
@@ -20,13 +22,16 @@ export default function LocalEntries() {
 }
 
 export type LocalEntry = {
-  rawInput: string;
+  prompt: string;
   timestamp: Date;
   entryKey: string;
+  workoutId: string | null;
 };
 
 function LocalEntry({ entry }: { entry: LocalEntry }) {
-  const { entryKey, rawInput, timestamp } = entry;
+  const [{ date }] = useAtom(dashboardState);
+  const { userId } = useAuth();
+  const { entryKey, prompt, timestamp, workoutId } = entry;
   const [visible, setVisible] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({
     x: 0,
@@ -39,7 +44,12 @@ function LocalEntry({ entry }: { entry: LocalEntry }) {
     setContextMenuPosition({ x: event.clientX, y: event.clientY });
   };
 
-  const handleCloseContextMenu = () => setVisible(false);
+  const { data, isLoading, isError } = useQuery(
+    ["get-processed-entry", timestamp],
+    () => getExerciseEntry(userId, entryKey, workoutId, prompt),
+  );
+
+  if (isError) return <h1>ERROR OCCURED!</h1>;
 
   return (
     <button
@@ -49,14 +59,10 @@ function LocalEntry({ entry }: { entry: LocalEntry }) {
       }}
       className="flex relative justify-between p-4 w-full rounded-lg border border-black/50"
     >
-      <h5 className="text-2xl">{rawInput}</h5>
+      <h5 className="text-2xl">
+        {isLoading ? <h6>loading</h6> : data && data.notes ? prompt : prompt}
+      </h5>
       <small className="text-xs">{format(timestamp, "hh:mm aa")}</small>
-      <ContextMenu
-        visible={visible}
-        setVisible={handleCloseContextMenu}
-        position={contextMenuPosition}
-        context="local-entry"
-      />
     </button>
   );
 }

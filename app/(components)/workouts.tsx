@@ -1,9 +1,7 @@
 "use client";
-import { Workout as WorkoutType } from "@prisma/client";
-import { useState } from "react";
 import Workout from "./workout";
 import { useQuery } from "react-query";
-import { getWorkout, getWorkouts } from "../(actions)/workout-actions";
+import { getWorkouts } from "../(actions)/workout-actions";
 import { useAuth } from "@clerk/nextjs";
 import { useAtom } from "jotai";
 import { dashboardState } from "../atoms";

@@ -1,20 +1,20 @@
 import { prisma } from "@/libs/prisma";
-import { ExerciseEntry, Prisma } from "@prisma/client";
+import { Entry, Prisma } from "@prisma/client";
 
 export async function postExerciseEntry(
-  eE: Prisma.ExerciseEntryCreateInput,
-): Promise<ExerciseEntry | null> {
+  eE: Prisma.EntryCreateInput,
+): Promise<Entry | null> {
   let exerciseEntry;
 
   if (eE && eE.id) {
-    exerciseEntry = await prisma.exerciseEntry.findFirst({
+    exerciseEntry = await prisma.entry.findFirst({
       where: { id: eE.id },
     });
     if (exerciseEntry) return exerciseEntry;
   }
 
   if (!exerciseEntry) {
-    exerciseEntry = await prisma.exerciseEntry.create({
+    exerciseEntry = await prisma.entry.create({
       data: eE,
     });
     return exerciseEntry;

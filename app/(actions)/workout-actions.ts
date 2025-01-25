@@ -4,7 +4,7 @@
 import { prisma } from "@/libs/prisma";
 import { Prisma, Workout } from "@prisma/client";
 
-interface CreateWorkoutPayload extends Prisma.WorkoutCreateInput { }
+interface CreateWorkoutPayload extends Prisma.WorkoutCreateInput {}
 export async function createWorkout(data: CreateWorkoutPayload) {
   const workout = await prisma.workout.create({ data });
   return workout;
@@ -13,15 +13,29 @@ export async function createWorkout(data: CreateWorkoutPayload) {
 export async function getWorkout(
   userId: string,
   date: Date | null,
+  workoutId: string | null,
+  workoutName: string | null,
+  notes: string | null,
 ): Promise<Workout | null> {
-  if (!date) return null;
-  const workouts = await prisma.workout.findFirst({
-    where: {
-      userId,
-      date,
-    },
+  if (!date || !userId || !workoutName) return null;
+
+  if (workoutId) {
+    const workout = await prisma.workout.findFirst({
+      where: {
+        userId,
+        date,
+        id: workoutId,
+      },
+    });
+
+    if (workout) return workout;
+  }
+
+  const newWorkout = await prisma.workout.create({
+    data: { userId, workoutName, notes },
   });
-  return workouts;
+
+  return newWorkout;
 }
 
 export async function getWorkouts(
