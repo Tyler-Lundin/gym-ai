@@ -3,69 +3,78 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql" // or your preferred database
+  provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id        String    @id @unique @default(cuid())
+  id        String        @id @unique @default(cuid())
   username  String
-  email     String    @unique
-  createdAt DateTime  @default(now())
+  email     String        @unique
+  createdAt DateTime      @default(now())
   workouts  Workout[]
   cycles    Cycle[]
-  Period    Period[]
-  Goal      Goal[]
+  periods   Period[]
+  goals     Goal[]
   notes     String[]
+  logs      ExerciseLog[] // Tracks all performance logs for the user
 }
 
 model Exercise {
-  id              String   @id @default(cuid())
-  exerciseName    String // e.g., "Bench Press"
+  id              String            @id @default(cuid())
+  name            String // e.g., "Bench Press"
   category        String // e.g., "Strength", "Cardio"
   description     String? // e.g., "A compound exercise targeting the chest."
   musclesTargeted String[] // e.g., ["Chest", "Triceps", "Shoulders"]
   equipment       String? // e.g., "Barbell, Dumbbells"
-  createdAt       DateTime @default(now())
-  exerciseEntries Entry[]
+  createdAt       DateTime          @default(now())
+  logs            ExerciseLog[]
+  WorkoutExercise WorkoutExercise[]
 }
-
-// model Day {
-//   id          String   @id @default(cuid())
-//   workoutId String
-//   userId      String
-//   goal        String
-// }
 
 model Workout {
-  id          String   @id @default(cuid())
-  workoutName String // e.g., "Upper Body Day"
-  date        DateTime @default(now())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  entries     Entry[]
-  cycleId     String?
-  cycle       Cycle?   @relation(fields: [cycleId], references: [id])
-  notes       String? // General notes about the workout
-  metadata    Json? // Structured data for APIs like ChatGPT (e.g., {duration: 90, intensity: "high"})
+  id        String            @id @default(cuid())
+  name      String // e.g., "Upper Body Day"
+  date      DateTime          @default(now())
+  userId    String
+  user      User              @relation(fields: [userId], references: [id])
+  exercises WorkoutExercise[] // Planned exercises for the workout
+  cycleId   String?
+  cycle     Cycle?            @relation(fields: [cycleId], references: [id])
+  notes     String? // General notes about the workout
+  metadata  Json? // Structured data for APIs (e.g., {duration: 90, intensity: "high"})
 }
 
-model Entry {
+model WorkoutExercise {
   id         String   @id @default(cuid())
   workoutId  String
-  entryKey   String
-  userId     String
   workout    Workout  @relation(fields: [workoutId], references: [id])
   exerciseId String
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  sets       Int?
-  reps       Int?
-  weight     Float? // Optional, for exercises involving weight
-  duration   Int? // Optional, for exercises like running (in seconds)
-  restTime   Int? // Rest between sets (in seconds)
-  notes      String? // Any additional notes for this specific entry
-  metadata   Json? // Structured data for external systems (e.g., AI feedback)
+  sets       Int? // Planned sets
+  reps       Int? // Planned reps
+  weight     Float? // Planned weight
+  duration   Int? // Planned duration (e.g., for cardio)
+  restTime   Int? // Planned rest time between sets (in seconds)
+  notes      String? // Notes or instructions for this exercise
+  metadata   Json? // Custom data for AI or analytics
+}
+
+model ExerciseLog {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  exerciseId    String
+  exercise      Exercise @relation(fields: [exerciseId], references: [id])
+  date          DateTime @default(now())
+  setsCompleted Int? // Actual sets completed
+  repsCompleted Int? // Actual reps completed
+  weightUsed    Float? // Actual weight used
+  duration      Int? // Actual duration (e.g., for cardio)
+  restTime      Int? // Actual rest time (if tracked)
+  notes         String? // Feedback or user notes
+  metadata      Json? // Data for analysis or AI feedback
 }
 
 model Cycle {
@@ -75,13 +84,11 @@ model Cycle {
   user      User      @relation(fields: [userId], references: [id])
   startDate DateTime
   endDate   DateTime?
-  period    String // e.g., "Strength", "Endurance", "Cutting"
-  phase     String // e.g., "Phase 1", "Phase 2"
-  workouts  Workout[]
-  notes     String? // Notes for the cycle
-  metadata  Json? // Structured data for tracking progress
-  Period    Period?   @relation(fields: [periodId], references: [id])
   periodId  String?
+  period    Period?   @relation(fields: [periodId], references: [id])
+  workouts  Workout[]
+  notes     String? // Notes about the cycle
+  metadata  Json? // Data for tracking progress
 }
 
 model Period {
@@ -93,7 +100,7 @@ model Period {
   description String? // e.g., "Plan focused on strength and hypertrophy."
   startDate   DateTime
   endDate     DateTime?
-  metadata    Json? // Additional data for analysis or API integration
+  metadata    Json? // Additional data for analysis or integration
 }
 
 model Goal {
@@ -104,5 +111,5 @@ model Goal {
   targetDate  DateTime
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
-  metadata    Json? // Custom data for progress tracking or AI integration
+  metadata    Json? // Data for tracking progress or AI integration
 }
