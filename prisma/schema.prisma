@@ -8,17 +8,34 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum UnitSystem {
+  METRIC // meters / centimeters / kgs
+  IMPERIAL // feet / inches / lbs
+}
+
 model User {
-  id        String        @id @unique @default(cuid())
+  // User
+  id        String     @id @unique @default(cuid())
+  authId    String
   username  String
-  email     String        @unique
-  createdAt DateTime      @default(now())
-  workouts  Workout[]
-  cycles    Cycle[]
-  periods   Period[]
-  goals     Goal[]
-  notes     String[]
-  logs      ExerciseLog[] // Tracks all performance logs for the user
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  // Settings
+  isInit    Boolean // is initialized or not
+  units     UnitSystem // enum { IMPERIAL or METRIC }
+  // Stats ? - Optional
+  height_ft Int?
+  height_in Int?
+  height_kg Int?
+  weight    Int?
+
+  // Relationships
+  workouts Workout[]
+  cycles   Cycle[]
+  periods  Period[]
+  goals    Goal[]
+  notes    String[]
+  logs     ExerciseLog[] // Tracks all performance logs for the user
 }
 
 model Exercise {
