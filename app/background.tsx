@@ -3,11 +3,11 @@ import React from "react";
 
 const Background = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main style={styles.container}>
+    <main style={styles.container} className="-z-50">
+      <div className="z-50">{children}</div>
       <div style={{ ...styles.layer, ...styles.layer1 }} />
       <div style={{ ...styles.layer, ...styles.layer2 }} />
       <div style={{ ...styles.layer, ...styles.layer3 }} />
-      {children}
     </main>
   );
 };
@@ -18,8 +18,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100vw",
     height: "100vh",
     overflow: "hidden",
-    background: "rgb(30,20,36)",
-    zIndex: "-50",
+    background: "rgb(12,7,15)",
   },
   layer: {
     position: "absolute",
@@ -34,17 +33,17 @@ const styles: Record<string, React.CSSProperties> = {
   },
   layer1: {
     backgroundImage: "radial-gradient(white 1px, transparent 1px)",
-    opacity: 0.1,
+    opacity: 0.7,
     animation: "rotateSlow 160s linear infinite",
   },
   layer2: {
     backgroundImage: "radial-gradient(white 1px, transparent 2px)",
-    opacity: 0.2,
+    opacity: 0.4,
     animation: "rotateMedium 140s linear infinite",
   },
   layer3: {
     backgroundImage: "radial-gradient(white 2px, transparent 3px)",
-    opacity: 0.4,
+    opacity: 0.3,
     animation: "rotateFast 120s linear infinite",
   },
 };
