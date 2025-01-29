@@ -29,95 +29,99 @@ model User {
   height_kg Int?
   weight    Int?
 
+  // Combined Macrocycle stats
+  totalWorkouts Int?
+  totalWeight   Float?
+  totalReps     Int?
+
   // Relationships
-  workouts Workout[]
-  cycles   Cycle[]
-  periods  Period[]
+  macros   Macrocycle[] // ~ 6 months - groups mesos 
+  mesos    Mesocycle[] /// ~ 8 weeks  - groups micros
+  micros   Microcycle[] // ~ 1 week   - groups workouts
   goals    Goal[]
-  notes    String[]
-  logs     ExerciseLog[] // Tracks all performance logs for the user
+  notes    Note[]
+  metadata Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
 }
 
 model Exercise {
-  id              String            @id @default(cuid())
+  id              String   @id @default(cuid())
   name            String // e.g., "Bench Press"
-  category        String // e.g., "Strength", "Cardio"
+  categories      String[] // e.g., "Strength", "Cardio"
   description     String? // e.g., "A compound exercise targeting the chest."
   musclesTargeted String[] // e.g., ["Chest", "Triceps", "Shoulders"]
   equipment       String? // e.g., "Barbell, Dumbbells"
-  createdAt       DateTime          @default(now())
-  logs            ExerciseLog[]
-  WorkoutExercise WorkoutExercise[]
+  createdAt       DateTime @default(now())
+  metadata        Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
 }
 
 model Workout {
-  id        String            @id @default(cuid())
-  name      String // e.g., "Upper Body Day"
-  date      DateTime          @default(now())
-  userId    String
-  user      User              @relation(fields: [userId], references: [id])
-  exercises WorkoutExercise[] // Planned exercises for the workout
-  cycleId   String?
-  cycle     Cycle?            @relation(fields: [cycleId], references: [id])
-  notes     String? // General notes about the workout
-  metadata  Json? // Structured data for APIs (e.g., {duration: 90, intensity: "high"})
+  id          String      @id @default(cuid())
+  name        String // e.g., "Upper Body Day"
+  date        DateTime    @default(now())
+  userId      String
+  entries     Entry[] // Planned exercises for the workout
+  cycleId     String?
+  micro       Microcycle? @relation(fields: [cycleId], references: [id])
+  notes       String? // General notes about the workout
+  totalWeight Float?
+  totalReps   Int?
+  metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
 }
 
-model WorkoutExercise {
-  id         String   @id @default(cuid())
+model Entry {
+  id         String  @id @default(cuid())
   workoutId  String
-  workout    Workout  @relation(fields: [workoutId], references: [id])
+  workout    Workout @relation(fields: [workoutId], references: [id])
   exerciseId String
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
   sets       Int? // Planned sets
   reps       Int? // Planned reps
   weight     Float? // Planned weight
   duration   Int? // Planned duration (e.g., for cardio)
   restTime   Int? // Planned rest time between sets (in seconds)
-  notes      String? // Notes or instructions for this exercise
-  metadata   Json? // Custom data for AI or analytics
+  metadata   Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
 }
 
-model ExerciseLog {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  exerciseId    String
-  exercise      Exercise @relation(fields: [exerciseId], references: [id])
-  date          DateTime @default(now())
-  setsCompleted Int? // Actual sets completed
-  repsCompleted Int? // Actual reps completed
-  weightUsed    Float? // Actual weight used
-  duration      Int? // Actual duration (e.g., for cardio)
-  restTime      Int? // Actual rest time (if tracked)
-  notes         String? // Feedback or user notes
-  metadata      Json? // Data for analysis or AI feedback
-}
-
-model Cycle {
-  id        String    @id @default(cuid())
-  name      String // e.g., "Hypertrophy Phase"
-  userId    String
-  user      User      @relation(fields: [userId], references: [id])
-  startDate DateTime
-  endDate   DateTime?
-  periodId  String?
-  period    Period?   @relation(fields: [periodId], references: [id])
-  workouts  Workout[]
-  notes     String? // Notes about the cycle
-  metadata  Json? // Data for tracking progress
-}
-
-model Period {
-  id          String    @id @default(cuid())
+model Macrocycle {
+  id          String      @id @default(cuid())
   name        String // e.g., "12-Week Training Plan"
   userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  cycles      Cycle[]
+  user        User        @relation(fields: [userId], references: [id])
+  mesocycles  Mesocycle[]
   description String? // e.g., "Plan focused on strength and hypertrophy."
   startDate   DateTime
   endDate     DateTime?
-  metadata    Json? // Additional data for analysis or integration
+  totalWeight Float?
+  totalReps   Int?
+  metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+}
+
+model Mesocycle {
+  id          String       @id @default(cuid())
+  name        String // e.g., "Hypertrophy Phase"
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  startDate   DateTime
+  endDate     DateTime?
+  macroId     String?
+  macro       Macrocycle?  @relation(fields: [macroId], references: [id])
+  notes       String? // Notes about the cycle
+  metadata    Json? // Data for tracking progress
+  Microcycle  Microcycle[]
+  totalWeight Float?
+  totalReps   Int?
+}
+
+model Microcycle {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  startDate   DateTime
+  endDate     DateTime?
+  mesoId      String?
+  meso        Mesocycle? @relation(fields: [mesoId], references: [id])
+  workouts    Workout[]
+  totalWeight Float?
+  totalReps   Int?
 }
 
 model Goal {
@@ -129,4 +133,13 @@ model Goal {
   completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
   metadata    Json? // Data for tracking progress or AI integration
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+  metadata  Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
 }
