@@ -8,11 +8,18 @@ import { processInput } from "./(actions)/processInput";
 import getExercise from "./(actions)/getExercise";
 import { postExerciseEntry } from "./(actions)/postExerciseEntry";
 import { getWorkout } from "@/app/(actions)/workout-actions";
+import { prisma } from "@/libs/prisma";
+import { Entry, Workout } from "@prisma/client";
+
+export interface AiReturn {
+  entry?: Entry;
+  workout?: Workout;
+}
 
 export async function POST(req: NextRequest) {
   try {
     // Parse request body
-    const { prompt, workoutId, timestamp, entryKey } = await req.json();
+    const { prompt, workoutId, timestamp } = await req.json();
     const { userId } = getAuth(req);
 
     // Validate required fields
@@ -22,21 +29,17 @@ export async function POST(req: NextRequest) {
 
     // Process input and extract necessary data
     const processedOutput = await processInput(prompt);
-    const { exercise: e, workout: w } = processedOutput;
+    if (processedOutput.error) console.log("ERROR: ", processedOutput.error);
+    if (processedOutput.error) return NextResponse.error();
+    const { exercise: e } = processedOutput;
     const createdAt = new Date(timestamp);
 
     // Validate exercise and workout details
-    if (
-      e?.exerciseName &&
-      e.equipment &&
-      e.musclesTargeted &&
-      e.description &&
-      w?.workoutName
-    ) {
+    if (e?.name) {
       // Fetch or create the exercise
       const exercise = await getExercise({
-        exerciseName: e.exerciseName,
-        category: e.category,
+        name: e.name,
+        categories: e.categories,
         musclesTargeted: e.musclesTargeted || [],
         createdAt,
       });
@@ -53,31 +56,45 @@ export async function POST(req: NextRequest) {
       }
 
       // Fetch or create the workout
-      const workout = await getWorkout(
-        userId,
-        createdAt,
-        workoutId,
-        w.workoutName,
-        w.notes,
-      );
+      const workout = await getWorkout(userId, createdAt, workoutId);
 
       if (!workout) {
         return NextResponse.json({ error: "Failed to retrieve workout data." });
       }
 
       // Create the exercise entry
-      const exerciseEntry = await postExerciseEntry({
-        userId,
-        entryKey,
-        exercise: { connect: { id: exercise.id } },
-        workout: { connect: { id: workout.id } },
+
+      const entry = await prisma.entry.create({
+        data: {
+          weight: e.weight || null,
+          workout: { connect: { id: workout.id } },
+          exerciseId: exercise.id,
+          prompt,
+        },
       });
 
-      if (!exerciseEntry) {
+      if (!entry) {
         return NextResponse.json({ error: "Failed to create exercise entry." });
       }
 
-      return NextResponse.json({ entry: exerciseEntry });
+      if ((e && e.weight) || e.reps) {
+        let previousTotalReps = workout.totalReps || 0;
+        let incrementReps = e && e.reps ? e.reps : 0;
+
+        let previousTotalWeight = workout.totalWeight || 0;
+        let incrementWeight = e && e.weight && e.reps ? e.weight * e.reps : 0;
+
+        if (incrementReps && incrementWeight) {
+          const updatedStats = await prisma.workout.update({
+            where: { id: workout.id },
+            data: {
+              totalReps: previousTotalReps + incrementReps,
+            },
+          });
+
+          return NextResponse.json({ entry, workout: updatedStats });
+        }
+      }
     }
 
     // Handle case where processed data is incomplete

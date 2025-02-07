@@ -1,9 +1,11 @@
 import StatusDot from "./status-dot";
 
 export function NextButton({
+  label = "Next",
   onClick,
   isDisabled = false,
 }: {
+  label?: string;
   onClick: () => void;
   isDisabled?: boolean;
 }) {
@@ -13,7 +15,7 @@ export function NextButton({
       className="relative w-full h-14 text-white rounded-lg border border-black opacity-100 transition-all hover:opacity-50 focus:opacity-50 disabled:pointer-events-none bg-black/100 disabled:bg-black/50"
       onClick={onClick}
     >
-      Next
+      {label}
       <StatusDot status={!isDisabled} />
     </button>
   );

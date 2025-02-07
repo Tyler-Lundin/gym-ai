@@ -1,12 +1,27 @@
 import { atom } from "jotai";
-import { DashboardState } from "./(dashboard)/hooks/useDashboard";
+import { Notification } from "./(components)/notification";
+import { DashboardState } from "./dashboard/hooks/useDashboard";
+import { MessagesState } from "./dashboard/components/messages";
 
 export const dashboardState = atom<DashboardState>({
-  date: null,
-  workoutId: null,
-  localEntries: [],
-  entryKey: null,
-  currentComponent: "HOME",
+  targetDate: null,
+  currentWorkoutId: null,
+  workoutIds: [],
+  workouts: [],
+  entryIds: [],
+  entries: [],
+  rawEntries: [],
 });
 
-export const appState = atom({});
+export const messagesAtom = atom<MessagesState>({
+  entries: [],
+  sentPrompts: [],
+  responses: [],
+  isOpen: false,
+});
+
+export const appState = atom<{
+  notifications: Notification[];
+}>({
+  notifications: [],
+});

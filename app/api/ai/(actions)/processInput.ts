@@ -7,12 +7,13 @@ import {
 } from "../(prompts)/process-input-prompt";
 
 const exerciseSchema = z.object({
-  exerciseName: z.string(),
-  category: z.string(),
-  description: z.string(),
-  musclesTargeted: z.array(z.string()),
-  equipment: z.array(z.string()),
+  name: z.string(),
+  categories: z.array(z.string()).optional(),
+  description: z.string().optional(),
+  musclesTargeted: z.array(z.string()).optional(),
+  equipment: z.array(z.string()).optional(),
   weight: z.number().optional(),
+
   reps: z.number().optional(),
   intensity: z.number().min(0).max(10).optional(),
   rir: z.number().optional(),
@@ -21,15 +22,8 @@ const exerciseSchema = z.object({
   notes: z.string().optional(),
 });
 
-const workoutSchema = z.object({
-  workoutName: z.string(),
-  date: z.date(),
-  notes: z.string(),
-});
-
 export const processInputSchema = z.object({
-  workout: workoutSchema,
-  exercise: exerciseSchema,
+  exercise: exerciseSchema.optional(),
   period: z.object({}).optional(),
   cycle: z.object({}).optional(),
   goal: z.object({}).optional(),
@@ -37,10 +31,7 @@ export const processInputSchema = z.object({
 });
 
 interface ProcessedOutput {
-  modelKey?: string;
-  actionKey?: string;
   exercise?: z.infer<typeof exerciseSchema>;
-  workout?: z.infer<typeof workoutSchema>;
   error?: string;
 }
 
@@ -51,14 +42,22 @@ export async function processInput(
     return { error: "no prompt" };
   }
 
-  const { object } = await generateObject({
-    model: openai("gpt-4"),
-    system,
-    prompt,
-    schema: processInputSchema,
-  });
+  console.log({ prompt });
 
-  console.log("Object:", object);
+  try {
+    const { object } = await generateObject({
+      model: openai("gpt-4"),
+      system,
+      prompt,
+      schema: processInputSchema,
+    });
 
-  return { ...object } as ProcessedOutput;
+    processInputSchema.parse(object);
+    console.log("Object:", object);
+
+    return { ...object } as ProcessedOutput;
+  } catch (err) {
+    console.error("Error generating or validating object:", err);
+    return { error: "Failed to generate or validate object" };
+  }
 }

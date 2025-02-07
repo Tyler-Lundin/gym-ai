@@ -1,6 +1,3 @@
-import { format } from "date-fns";
-import ExerciseEntry from "./exercise-entry";
-
 export default function ExerciseEntries({ workoutId }: { workoutId: string }) {
   return (
     <div className="relative p-4 m-4 rounded-lg border border-black">

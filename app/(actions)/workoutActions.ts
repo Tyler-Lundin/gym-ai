@@ -1,10 +1,10 @@
-// app/(actions)/workout-actions.ts
 "use server";
 
 import { prisma } from "@/libs/prisma";
 import { Prisma, Workout } from "@prisma/client";
+import { format } from "date-fns";
 
-interface CreateWorkoutPayload extends Prisma.WorkoutCreateInput {}
+interface CreateWorkoutPayload extends Prisma.WorkoutCreateInput { }
 export async function createWorkout(data: CreateWorkoutPayload) {
   const workout = await prisma.workout.create({ data });
   return workout;
@@ -14,10 +14,8 @@ export async function getWorkout(
   userId: string,
   date: Date | null,
   workoutId: string | null,
-  workoutName: string | null,
-  notes: string | null,
 ): Promise<Workout | null> {
-  if (!date || !userId || !workoutName) return null;
+  if (!date || !userId) return null;
 
   if (workoutId) {
     const workout = await prisma.workout.findFirst({
@@ -31,8 +29,10 @@ export async function getWorkout(
     if (workout) return workout;
   }
 
+  const initialName = format(new Date(date), "mm-dd-yyyy");
+
   const newWorkout = await prisma.workout.create({
-    data: { userId, workoutName, notes },
+    data: { userId, name: initialName, date },
   });
 
   return newWorkout;

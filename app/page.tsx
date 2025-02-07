@@ -1,8 +1,17 @@
+"use server";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import Dashboard from "./(dashboard)/dashboard";
 import LandingPage from "./(components)/landing-page";
+import { currentUser } from "@clerk/nextjs/server";
+import { prisma } from "@/libs/prisma";
+import { redirect } from "next/navigation";
+import Dashboard from "./dashboard/page";
 
-export default function Index() {
+export default async function Index() {
+  const authUser = await currentUser();
+  const user = await prisma.user.findFirst({
+    where: { authId: authUser?.id || "" },
+  });
+  if (authUser && !user) redirect("/register");
   return (
     <>
       <SignedOut>

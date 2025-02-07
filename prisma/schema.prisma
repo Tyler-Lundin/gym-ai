@@ -26,7 +26,7 @@ model User {
   // Stats ? - Optional
   height_ft Int?
   height_in Int?
-  height_kg Int?
+  height_cm Int?
   weight    Int?
 
   // Combined Macrocycle stats
@@ -49,7 +49,7 @@ model Exercise {
   categories      String[] // e.g., "Strength", "Cardio"
   description     String? // e.g., "A compound exercise targeting the chest."
   musclesTargeted String[] // e.g., ["Chest", "Triceps", "Shoulders"]
-  equipment       String? // e.g., "Barbell, Dumbbells"
+  equipment       String[] // e.g., "Barbell, Dumbbells"
   createdAt       DateTime @default(now())
   metadata        Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
 }
@@ -66,19 +66,23 @@ model Workout {
   totalWeight Float?
   totalReps   Int?
   metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  createdAt   DateTime    @default(now())
 }
 
 model Entry {
-  id         String  @id @default(cuid())
-  workoutId  String
-  workout    Workout @relation(fields: [workoutId], references: [id])
-  exerciseId String
+  id         String   @id @default(cuid())
+  workoutId  String?
+  workout    Workout? @relation(fields: [workoutId], references: [id])
+  exerciseId String?
   sets       Int? // Planned sets
   reps       Int? // Planned reps
   weight     Float? // Planned weight
   duration   Int? // Planned duration (e.g., for cardio)
   restTime   Int? // Planned rest time between sets (in seconds)
   metadata   Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  prompt     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
 }
 
 model Macrocycle {
@@ -93,6 +97,7 @@ model Macrocycle {
   totalWeight Float?
   totalReps   Int?
   metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  createdAt   DateTime    @default(now())
 }
 
 model Mesocycle {
@@ -109,6 +114,7 @@ model Mesocycle {
   Microcycle  Microcycle[]
   totalWeight Float?
   totalReps   Int?
+  createdAt   DateTime     @default(now())
 }
 
 model Microcycle {
@@ -122,6 +128,7 @@ model Microcycle {
   workouts    Workout[]
   totalWeight Float?
   totalReps   Int?
+  createdAt   DateTime   @default(now())
 }
 
 model Goal {
