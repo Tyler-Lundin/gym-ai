@@ -18,11 +18,10 @@ export default async function LandingPage() {
       <div className="grid z-40 gap-8 p-10 rounded-lg border-2 bg-black/70 backdrop-blur-sm border-white/50">
         <LogoMain />
         <SignInButton>
-          <button
-            style={logoFont.style}
-            className="grid z-50 grid-flow-col gap-6 justify-between items-center place-content-center py-2 px-8 text-4xl font-bold bg-green-500 rounded-md border-4 transition-all cursor-pointer hover:text-white hover:bg-green-800 hover:scale-105 focus:text-white focus:bg-green-800 focus:scale-105 focus:outline-none text-green-950 border-black/40"
-          >
-            Get Started <RiArrowRightLine className="text-2xl" />
+          <button style={logoFont.style}>
+            <span className="grid z-50 grid-flow-col gap-6 justify-between items-center place-content-center py-2 px-8 text-4xl font-bold bg-green-500 rounded-md border-4 transition-all cursor-pointer hover:text-white hover:bg-green-800 hover:scale-105 focus:text-white focus:bg-green-800 focus:scale-105 focus:outline-none text-green-950 border-black/40">
+              Get Started <RiArrowRightLine className="text-2xl" />
+            </span>
           </button>
         </SignInButton>
         <Questions />
