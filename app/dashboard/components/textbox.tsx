@@ -1,14 +1,12 @@
 "use client";
 import useTextbox from "../hooks/useTextbox";
-import sendPrompt from "@/app/(actions)/sendPrompt";
+import { sendPrompt } from "@/app/(actions)/promptActions";
 import { format } from "date-fns";
 import { useSWRConfig } from "swr";
-import { MessagesState } from "./messages";
-import { Dispatch, useEffect, useState } from "react";
-import { SetStateAction, useAtom } from "jotai";
-import { Entry } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { useAtom } from "jotai";
 import { v4 } from "uuid";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { messagesAtom } from "@/app/atoms";
 
 export async function sendPromptClient({ prompt }: { prompt: string }) {
@@ -28,8 +26,8 @@ export default function TextBox() {
   }, [timestamp]);
 
   useEffect(() => {
-    setDateString(format(timestamp, "LLLL dd yyyy"));
-  }, []);
+    setDateString(format(timestamp, "MM/dd/yy"));
+  }, [timestamp]);
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
@@ -53,8 +51,18 @@ export default function TextBox() {
       initial={{ opacity: 0, translateX: -25 }}
       animate={{ opacity: 100, translateX: 0 }}
       exit={{ opacity: 0, translateX: -25 }}
-      className="grid absolute right-4 bottom-4 left-4 gap-2 p-8 bg-white bg-gradient-to-l rounded-lg border border-black shadow-md md:px-8 z-[400] backdrop-blur-md h-min dark:via-black/70 dark:from-blue-950/80 dark:to-black/85"
+      className="grid gap-2 p-8 bg-white rounded-lg border border-black shadow-md md:px-8 dark:bg-black min-h-20 z-[400] backdrop-blur-md h-min"
     >
+      {/* Timestamp */}
+      <span className="flex justify-between">
+        <h6 className="font-thin text-black uppercase dark:text-white">
+          {dateString || "01-23-4567"}
+        </h6>
+
+        <h6 className="font-thin text-black uppercase dark:text-white">
+          {timeString}
+        </h6>
+      </span>
       {/* Textarea */}
       <div className="flex">
         <textarea
@@ -84,21 +92,11 @@ export default function TextBox() {
         <button
           onClick={handleSend}
           id="send_btn"
-          className="py-1 px-8 font-bold text-black bg-blue-400 rounded-r-lg border border-blue-700 transition-transform transform hover:bg-green-300 focus:bg-green-300"
+          className="py-1 px-8 font-bold text-black bg-blue-400 rounded-r-lg border border-blue-700 transition-all transform hover:bg-green-300 focus:bg-green-300"
         >
           Send
         </button>
       </div>
-      {/* Timestamp */}
-      <span className="flex justify-between">
-        <h6 className="font-thin text-black uppercase dark:text-white">
-          {dateString || "01-23-4567"}
-        </h6>
-
-        <h6 className="font-thin text-black uppercase dark:text-white">
-          {timeString}
-        </h6>
-      </span>
     </motion.div>
   );
 }

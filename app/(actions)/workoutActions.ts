@@ -4,7 +4,7 @@ import { prisma } from "@/libs/prisma";
 import { Prisma, Workout } from "@prisma/client";
 import { format } from "date-fns";
 
-interface CreateWorkoutPayload extends Prisma.WorkoutCreateInput { }
+type CreateWorkoutPayload = Prisma.WorkoutCreateInput;
 export async function createWorkout(data: CreateWorkoutPayload) {
   const workout = await prisma.workout.create({ data });
   return workout;

@@ -13,3 +13,14 @@ export async function getEntries() {
     where: { workoutId: workout.id },
   });
 }
+
+export async function DeleteEntry({ id }: { id: string }) {
+  const user = await currentUser();
+  if (!user) return;
+  const deletedEntry = await prisma.entry.delete({
+    where: {
+      id,
+    },
+  });
+  return deletedEntry;
+}

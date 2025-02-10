@@ -1,7 +1,6 @@
 import { InputUsername } from "@/app/(components)/inputs";
 import { useEffect, useState } from "react";
 import { BounceLoader } from "react-spinners";
-import useNotification from "@/app/(hooks)/useNotification";
 import { InitializeComponentProps } from "../Initialize";
 import { NextButton } from "@/app/dashboard/components/buttons";
 import StatusDot from "@/app/dashboard/components/status-dot";
@@ -17,7 +16,11 @@ export default function ProfileSetup({
   handleClearStatus,
 }: InitializeComponentProps) {
   const { username, height, weight } = userData;
-  const { feet, inches, centimeters } = height;
+  const {
+    feet,
+    inches,
+    // centimeters
+  } = height;
   const [invalidUsernames, setInvalidUsernames] = useState<string[]>([]);
   const [usernameGood, setUsernameGood] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -34,7 +37,7 @@ export default function ProfileSetup({
       !invalidUsernames.includes(username.trim());
     setUsernameGood(isGood);
     if (!isGood) setInvalidUsernames((prev) => [...prev, username]);
-  }, [username, status, message]);
+  }, [username, status, message, invalidUsernames]);
 
   const handleNext = () => {
     if (!username) {
@@ -46,8 +49,7 @@ export default function ProfileSetup({
 
   const isFeetGood = typeof feet === "number" && feet > 0 && feet < 10;
   const isInchesGood = typeof inches === "number" && inches >= 0 && inches < 12;
-  const isCentimetersGood =
-    typeof centimeters === "number" && centimeters > 45 && centimeters < 250;
+  // const isCentimetersGood = typeof centimeters === "number" && centimeters > 45 && centimeters < 250;
   const isHeightGood = isFeetGood && isInchesGood;
   const isWeightGood =
     typeof weight === "number" && weight >= 50 && weight <= 999;
@@ -121,7 +123,7 @@ export default function ProfileSetup({
             value={typeof weight === "number" && weight > 0 ? weight : ""}
             type="number"
             onChange={(e) => {
-              let value = e.target.value;
+              const value = e.target.value;
               // Allow empty input (for selecting all and deleting)
               if (value === "") {
                 return setUserData((prev) => ({ ...prev, weight: 0 }));

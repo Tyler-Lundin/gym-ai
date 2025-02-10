@@ -1,6 +1,6 @@
-import { InitialUserData } from "@/app/initialize/components/Initialize";
+import { InitialUserData } from "@/app/create-profile/components/Initialize";
 import { prisma } from "@/libs/prisma";
-import { currentUser, getAuth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { User } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,7 +25,7 @@ export interface InitializeReturn {
 const newReturn = (s: Status, m: Message, user?: User, redirect?: boolean) =>
   NextResponse.json({ s, m, user: user || null, redirect });
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   const { userData } = await req.json();
   const { username, height, weight, units } = userData as InitialUserData;
   console.log({ userData });
@@ -55,6 +55,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       height_ft: height.feet || 0,
       height_in: height.inches || 0,
       height_cm: height.centimeters || 0,
+      weight: weight || 0,
     },
   });
 

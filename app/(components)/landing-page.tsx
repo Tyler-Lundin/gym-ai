@@ -1,5 +1,7 @@
 import { SignInButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { Titillium_Web } from "next/font/google";
+import { redirect } from "next/navigation";
 import { RiArrowRightLine, RiHexagonFill } from "react-icons/ri";
 
 // it says tit so I picked it - no joke
@@ -8,7 +10,9 @@ const logoFont = Titillium_Web({
   weight: ["400", "700", "900"],
 });
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const user = await currentUser();
+  if (user) redirect("/create-profile");
   return (
     <div className="grid fixed top-0 right-0 bottom-0 left-0 place-content-center bg-gradient-to-bl bg-neutral-950/20">
       <div className="grid z-40 gap-8 p-10 rounded-lg border-2 bg-black/70 backdrop-blur-sm border-white/50">

@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { dashboardState } from "@/app/atoms";
-import { LocalEntry } from "../components/local-entries";
 import { User } from "@clerk/nextjs/server";
 import { Entry, Workout } from "@prisma/client";
 
@@ -19,7 +18,7 @@ export interface DashboardState {
 }
 
 export default function useDashboard() {
-  const [_, setState] = useAtom(dashboardState);
+  const [, setState] = useAtom(dashboardState);
   useEffect(() => {
     async function getDashboardData() {
       const response = await fetch("/api/dashboard");
@@ -37,5 +36,5 @@ export default function useDashboard() {
       }
     }
     getDashboardData();
-  }, []);
+  }, [setState]);
 }

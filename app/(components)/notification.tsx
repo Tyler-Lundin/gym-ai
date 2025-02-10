@@ -44,23 +44,6 @@ export default function Notifications() {
   useEffect(() => {
     setShowing([
       ...notifications.map((notif) => ({ ...notif, id: uuid() })), // Ensure unique IDs
-      // {
-      //   type: "SUCCESS",
-      //   message: "This is a Success Notification",
-      //   id: uuid(),
-      // },
-      // { type: "ERROR", message: "This is an Error Notification", id: uuid() },
-      // { type: "INFO", message: "This is an Info Notification", id: uuid() },
-      // {
-      //   type: "WARNING",
-      //   message: "This is a Warning Notification",
-      //   id: uuid(),
-      // },
-      // {
-      //   type: "MESSAGE",
-      //   message: "This is a Message Notification",
-      //   id: uuid(),
-      // },
     ]);
   }, [notifications]);
 
@@ -87,7 +70,7 @@ export default function Notifications() {
     <div className="overflow-hidden absolute top-0 right-0 p-3 space-y-2 pointer-events-none z-[100]">
       <AnimatePresence>
         {[...showing].reverse().map((n) => (
-          <Notification
+          <NotificationComponent
             key={n.id}
             type={n.type}
             message={n.message}
@@ -100,7 +83,7 @@ export default function Notifications() {
 }
 
 // Notification component with motion animation
-function Notification({
+function NotificationComponent({
   type,
   message,
   onClick,

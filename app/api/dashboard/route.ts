@@ -5,53 +5,54 @@ import { NextRequest, NextResponse } from "next/server";
 
 export type Status = "ERROR" | "SUCCESS";
 export type Message =
-  | "AUTH ERROR"
-  | "EMAIL ERROR"
-  | "USER NOT FOUND"
-  | "WORKOUT NOT FOUND"
-  | "WORKOUT FOUND"
-  | "USER FOUND";
+  | "Not authorized"
+  | "Invalid email"
+  | "Account not found"
+  | "Workout not found"
+  | "Workout found"
+  | "Account found";
 
-const newReturn = (
-  s: Status,
-  m: Message,
-  user?: User | null,
-  workout?: Workout | null,
-) => NextResponse.json({ s, m, user: user || null, workout: workout || null });
+type FinishWith = {
+  s: Status;
+  m: Message;
+  user?: User | null;
+  workout?: Workout | null;
+};
+const finishWith = ({
+  s,
+  m,
+  user,
+  workout,
+}: FinishWith): NextResponse<FinishWith> =>
+  NextResponse.json({ s, m, user: user || null, workout: workout || null });
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   const { userId } = getAuth(req);
+  if (!userId) return finishWith({ s: "ERROR", m: "Not authorized" });
+
   const authUser = await currentUser();
-  if (!userId) return newReturn("ERROR", "AUTH ERROR");
+  if (!authUser) return finishWith({ s: "ERROR", m: "Not authorized" });
   const email = String(authUser?.primaryEmailAddress);
-  if (!email) return newReturn("ERROR", "EMAIL ERROR");
+  if (!email) return finishWith({ s: "ERROR", m: "Invalid email" });
 
   const targetDate = new Date();
-
   const user = await prisma.user.findUnique({
     where: { authId: userId, email },
   });
+  if (!user) return finishWith({ s: "ERROR", m: "Account not found" });
 
   const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
   const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
 
-  if (user) {
-    const workout = await prisma.workout.findFirst({
-      where: {
-        date: {
-          gte: startOfDay,
-          lte: endOfDay,
-        },
-        userId,
+  const workout = await prisma.workout.findFirst({
+    where: {
+      date: {
+        gte: startOfDay,
+        lte: endOfDay,
       },
-    });
-    if (workout) return newReturn("SUCCESS", "WORKOUT FOUND", user, workout);
-  } else return newReturn("ERROR", "WORKOUT NOT FOUND");
-  return newReturn("ERROR", "USER NOT FOUND");
+      userId,
+    },
+  });
+  if (!workout) return finishWith({ s: "ERROR", m: "Workout not found" });
+  else return finishWith({ s: "SUCCESS", m: "Workout found", user, workout });
 }
-
-// async function findOrCreateUser(authId: string) {
-//   const currentUser = await prisma.user.findUnique({
-//     where: { authId },
-//   });
-// }

@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, useReducer, useCallback } from "react";
-import { format } from "date-fns";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 export default function useTextbox() {
   const [{ inputValue, timestamp, isFocused }, setState] = useState({

@@ -1,9 +1,7 @@
 "use client";
-import ProfileSetup from "./steps/profile-setup";
-import { UnitSystem, User } from "@prisma/client";
+import { UnitSystem } from "@prisma/client";
 import {
   InitializeMessage,
-  InitializeReturn,
   InitializeStatus,
 } from "@/app/api/initialize/route";
 import useInitialize from "../hooks/useInitialize";

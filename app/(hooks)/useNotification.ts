@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import { NotificationTypes, Notification } from "../(components)/notification";
 
 export default function useNotification() {
-  const [{ notifications }, setNotifications] = useAtom(appState);
+  const [, setNotifications] = useAtom(appState);
 
   const sendNotification = (message: string, type: NotificationTypes) => {
     const newNotification: Notification = {
