@@ -1,79 +1,86 @@
 "use client";
 import { useState } from "react";
-import { InitializeReturn } from "@/app/api/initialize/route";
 import ProfileSetup from "../components/steps/profile-setup";
 import { InitialUserData } from "../components/Initialize";
 import { useRouter } from "next/navigation";
 import useNotification from "@/app/(hooks)/useNotification";
+import { InitializeReturn } from "@/app/api/profile/create/route";
 
-const Steps = [{ component: ProfileSetup, title: "Set Up Your Profile" }];
+const STEPS = [{ component: ProfileSetup, title: "Set Up Your Profile" }];
 
 export default function useInitialize() {
-  const [step, setStep] = useState<number>(0);
-  const { push } = useRouter();
+  const [step, setStep] = useState(0);
   const [userData, setUserData] = useState<InitialUserData>({
     username: "",
-    height: { feet: 0, inches: 0 },
+    height: { feet: 0, inches: 0, centimeters: 0 },
     units: "IMPERIAL",
     weight: 0,
   });
+
   const [status, setStatus] = useState<
     InitializeReturn["s"] | "LOADING" | null
   >(null);
   const [message, setMessage] = useState<InitializeReturn["m"] | null>(null);
 
-  const StepComponent = Steps[step]?.component;
+  const { push } = useRouter();
   const { sendNotification } = useNotification();
+  const StepComponent = STEPS[step]?.component;
+
   const handleNext = () => setStep((prev) => prev + 1);
   const handlePrevious = () => setStep((prev) => Math.max(prev - 1, 0));
   const handleClearStatus = () => {
     setStatus(null);
     setMessage(null);
   };
-  const handleSubmit = async () => {
+
+  /**
+   * Submits user initialization data to the API.
+   */
+  const submitInitialization = async () => {
+    setStatus("LOADING");
+
     try {
-      setStatus("LOADING");
-      const response = await fetch("/api/initialize", {
+      const response = await fetch("/api/profile/create", {
         method: "POST",
-        body: JSON.stringify({ userData }),
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userData }),
       });
 
       if (!response.ok) throw new Error("Initialization failed");
 
-      const body = await response.json();
-      const { s, m, redirect, user } = body as InitializeReturn;
+      const { s, m, redirect, user } =
+        (await response.json()) as InitializeReturn;
 
-      if (redirect && user) {
-        setStatus(s);
-        setMessage(m);
-        if (s === "ERROR") {
-          sendNotification("An error occurred during initialization", "ERROR");
-        } else if (s === "SUCCESS") {
-          sendNotification("Initialization successful", "SUCCESS");
-        }
+      setStatus(s);
+      setMessage(m);
+      sendNotification(
+        s === "ERROR"
+          ? "An error occurred during initialization"
+          : "Initialization successful",
+        s,
+      );
 
-        if (s === "SUCCESS" && m === "PROFILE CREATED") {
-          push("/");
-        }
+      if (s === "SUCCESS" && m === "PROFILE CREATED" && redirect && user) {
+        push("/");
       }
     } catch (error) {
       console.error("Error initializing user:", error);
+      setStatus("ERROR");
       sendNotification("Failed to initialize user", "ERROR");
     }
   };
 
   return {
-    steps: Steps,
+    steps: STEPS,
     step,
     StepComponent,
     userData,
     setUserData,
     handleNext,
-    handleSubmit,
     handlePrevious,
+    handleClearStatus,
+    handleSubmit: submitInitialization,
     status,
     message,
-    handleClearStatus,
   };
 }

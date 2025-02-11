@@ -6,7 +6,7 @@ import Background from "../(components)/background";
 export default async function Dashboard() {
   return (
     <Background>
-      <main className="grid overflow-hidden gap-2 p-4 w-screen h-screen rounded-lg">
+      <main className="grid overflow-hidden gap-2 p-4 w-screen rounded-lg h-dvh">
         <Navbar />
         <Messages />
         <NotificationProvider />

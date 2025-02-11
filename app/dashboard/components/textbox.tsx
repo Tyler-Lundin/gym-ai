@@ -51,7 +51,7 @@ export default function TextBox() {
       initial={{ opacity: 0, translateX: -25 }}
       animate={{ opacity: 100, translateX: 0 }}
       exit={{ opacity: 0, translateX: -25 }}
-      className="grid gap-2 p-8 bg-white rounded-lg border border-black shadow-md md:px-8 dark:bg-black min-h-20 z-[400] backdrop-blur-md h-min"
+      className="grid gap-2 p-4 pb-8 bg-white border-black shadow-md md:p-8 md:px-8 dark:bg-black border-y min-h-20 z-[400] backdrop-blur-md h-min"
     >
       {/* Timestamp */}
       <span className="flex justify-between">
@@ -92,7 +92,7 @@ export default function TextBox() {
         <button
           onClick={handleSend}
           id="send_btn"
-          className="py-1 px-8 font-bold text-black bg-blue-400 rounded-r-lg border border-blue-700 transition-all transform hover:bg-green-300 focus:bg-green-300"
+          className="py-1 px-4 font-bold text-black bg-blue-400 rounded-r-lg border border-blue-700 transition-all transform hover:bg-green-300 focus:bg-green-300"
         >
           Send
         </button>

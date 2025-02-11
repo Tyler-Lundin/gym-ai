@@ -9,7 +9,7 @@ export default function ChatEntries() {
   return (
     <div
       ref={containerRef}
-      className="overflow-y-auto space-y-4 h-full no-scrollbar"
+      className="block overflow-y-auto flex-grow space-y-4 h-full basis-auto no-scrollbar border-y-black/25 dark:border-y-white/25"
     >
       {sorted.map((entry, index) => (
         <span key={`entry-${index}`}>
@@ -19,7 +19,9 @@ export default function ChatEntries() {
             handleClick={handleClick}
             openEntry={openEntry}
           />
-          <hr className="w-full border-x border-black/15 dark:border-white/15" />
+          {index !== sorted.length - 1 && (
+            <hr className="w-full border-x border-black/15 dark:border-white/15" />
+          )}
         </span>
       ))}
     </div>

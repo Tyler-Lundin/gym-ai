@@ -24,12 +24,20 @@ export interface SentPrompt {
 
 export default function Messages() {
   const [{ isOpen }, setState] = useAtom<MessagesState>(messagesAtom);
+
   useEffect(() => {
     const localSentPrompts = getLocalSentPrompts();
-    setState((state) => ({
-      ...state,
-      sentPrompts: [...state.sentPrompts, ...localSentPrompts],
-    }));
+
+    setState((state) => {
+      const uniquePrompts = new Map(
+        [...state.sentPrompts, ...localSentPrompts].map((p) => [p.id, p]),
+      );
+
+      return {
+        ...state,
+        sentPrompts: Array.from(uniquePrompts.values()),
+      };
+    });
   }, [setState]);
 
   if (!isOpen)
@@ -43,14 +51,14 @@ export default function Messages() {
           onClick={() => setState((state) => ({ ...state, isOpen: true }))}
           className="grid absolute right-8 bottom-8 place-content-center h-16 rounded-full z-[500] aspect-square"
         >
-          <motion.div className="rounded-full border border-green-600 transition-all hover:scale-125 bg-black/50 backdrop-blur-sm w-fit h-fit group">
-            <IoIosAdd className="text-6xl text-green-600 rounded-full transition-all group-hover:scale-125" />
+          <motion.div className="rounded-full border border-green-700 shadow transition-all dark:border-green-400 dark:shadow-none hover:scale-125 shadow-black backdrop-blur-sm w-fit h-fit group">
+            <IoIosAdd className="text-6xl text-green-700 rounded-full transition-all dark:text-green-400 group-hover:scale-125" />
           </motion.div>
         </motion.button>
       </AnimatePresence>
     );
   return (
-    <div className="grid fixed top-0 right-0 bottom-0 left-0 z-40 grid-flow-row items-stretch pt-24 w-screen h-screen bg-black/45 backdrop-blur-sm">
+    <div className="flex fixed top-0 right-0 bottom-0 left-0 z-40 flex-col pt-24 w-screen h-screen bg-neutral-200 backdrop-blur-sm dark:bg-black/45">
       <ChatEntries />
       <AnimatePresence>
         <TextBox />

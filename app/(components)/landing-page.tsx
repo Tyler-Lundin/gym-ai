@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { RiArrowRightLine, RiHexagonFill } from "react-icons/ri";
 import { Titillium_Web } from "next/font/google";
 import SignUpButton from "./sign-up-button";
+import Logo from "./logo";
 
 // it says tit so I picked it - no joke
 const logoFont = Titillium_Web({
@@ -26,14 +27,10 @@ export default async function LandingPage() {
 }
 
 export function LogoMain() {
-  const APPNAME = "Fitz";
   return (
     <span className="grid relative grid-flow-col w-min h-min">
-      <h6 style={logoFont.style} className="text-6xl font-black text-white">
-        {APPNAME}
-      </h6>
-      <RiHexagonFill className="absolute right-0 bottom-1 text-4xl translate-x-full text-neutral-200" />
-      <RiHexagonFill className="absolute right-0 bottom-1 text-4xl translate-y-1/4 translate-x-[150%] scale-50 text-red-500" />
+      <Logo />
+      <RiHexagonFill className="absolute right-0 bottom-1 translate-x-full text-neutral-200" />
     </span>
   );
 }

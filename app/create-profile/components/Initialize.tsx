@@ -8,8 +8,8 @@ import useInitialize from "../hooks/useInitialize";
 
 export interface InitialUserData {
   username: string;
-  height: { feet?: number; inches?: number; centimeters?: number };
-  weight: number | "";
+  height: { feet: number; inches: number; centimeters: number };
+  weight: number;
   units: UnitSystem;
 }
 
@@ -37,7 +37,7 @@ export default function Initialize() {
   } = useInitialize();
   return (
     <main className="fixed top-0 right-0 bottom-0 left-0 bg-neutral-100">
-      <div className="grid relative place-content-center w-full h-full text-black">
+      <div className="grid relative place-content-center w-screen h-screen text-black">
         <h1 className="absolute top-4 left-4 text-2xl font-thin">
           {steps[step]?.title}
         </h1>

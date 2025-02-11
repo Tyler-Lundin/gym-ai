@@ -14,7 +14,7 @@ function Input({ label, toggle, ...props }: InputProps) {
       <div className="relative">
         <input
           {...props}
-          className="p-2 text-4xl rounded-lg border border-black"
+          className="p-2 w-full text-xl rounded-lg border border-black md:text-4xl"
         />
         <span
           className={`${toggle ? "bg-green-400" : "bg-red-400"} absolute top-2 right-2 rounded-full w-2 h-2 border border-black`}

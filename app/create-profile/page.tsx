@@ -2,6 +2,6 @@
 
 import Initialize from "./components/Initialize";
 
-export default function CreateProfile() {
+export default function CreateProfilePage() {
   return <Initialize />;
 }
