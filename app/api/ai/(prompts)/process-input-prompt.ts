@@ -1,3 +1,5 @@
+import { EntrySchema, ExerciseSchema } from "@/types/zod-schema";
+
 export const models = {
   USER: "user",
   WORKOUT: "workout",
@@ -21,26 +23,27 @@ export const actions = {
 } as const;
 
 export type ActionKey = keyof typeof actions;
+export const processInputPrompt = `
+  exercise model: ${JSON.stringify(ExerciseSchema)}
+  and
+  entry model: ${JSON.stringify(EntrySchema)}
 
-export const processInputPrompt = `      
-      You have one purpose:
-        ---
-        models: User Exercise Workout Entry Cycle Period Goal
-        actions: REJECT - CREATE - READ - UPDATE - DELETE - SUGGEST - ANALYZE
-        ---
-        You will receive user prompts
-        These prompts SHOULD be tailored towards 
-        going to the gym / exercise / health
-        if not, please reject  
-        The Models that are being used for these
-        gym types are as follows:
-        Your one role is this:
-          Decide what CRUD operation should be used
-          then decide what model is best applied
-          if a decision can't be made for any reason
-          you are to respond with "rejected"
-          your response should match the format of:
-          "{action}-{model}" (all-lowercase-with-dashes)
-          or be
-          "rejected" 
-    `;
+  **IMPORTANT**: Please fill out all relevant fields in the Exercise schema as fully as possible based on the provided prompt. If a field is missing or partially available, infer the missing information using common knowledge of exercises. 
+
+  Exercise Schema Inclusions:
+  - **categories**: Inferred from the exercise type. For example, "Barbell overhead press" could be "upper body", "strength".
+  - **description**: A brief, accurate description of the exercise.
+  - **musclesTargeted**: For the "Barbell overhead press", you should infer muscles like "shoulders", "triceps", and "upper chest".
+  - **equipment**: "Barbell" should be listed for "Barbell overhead press".
+
+  - **Strict Instructions for Data**:
+    - **Do NOT create fictional data**—use only concrete values from the input or known details.
+    - If a value is partially available and can be logically inferred, fill it in.
+    - **Strict adherence to the schema's types** (e.g., use numbers for sets, reps, weight, and arrays for musclesTargeted, categories).
+
+  **Example for Barbell Overhead Press**:
+  - **musclesTargeted**: ["shoulders", "triceps", "upper chest"]
+  - **equipment**: ["barbell"]
+  - **categories**: ["upper body", "strength"]
+  - **description**: "A strength training exercise focused on shoulder and tricep development."
+`;

@@ -1,9 +1,7 @@
 "use client";
-import { useEffect } from "react";
 import ChatEntries from "./entries";
 import TextBox from "./textbox";
 import { Entry } from "@prisma/client";
-import { getLocalSentPrompts } from "@/utils/localStorage";
 import { IoIosAdd } from "react-icons/io";
 import { useAtom } from "jotai";
 import { messagesAtom } from "@/app/atoms";
@@ -24,21 +22,6 @@ export interface SentPrompt {
 
 export default function Messages() {
   const [{ isOpen }, setState] = useAtom<MessagesState>(messagesAtom);
-
-  useEffect(() => {
-    const localSentPrompts = getLocalSentPrompts();
-
-    setState((state) => {
-      const uniquePrompts = new Map(
-        [...state.sentPrompts, ...localSentPrompts].map((p) => [p.id, p]),
-      );
-
-      return {
-        ...state,
-        sentPrompts: Array.from(uniquePrompts.values()),
-      };
-    });
-  }, [setState]);
 
   if (!isOpen)
     return (

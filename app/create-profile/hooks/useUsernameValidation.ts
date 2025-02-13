@@ -28,7 +28,7 @@ const useUsernameValidation = (
     if (!isGood && !invalidUsernames.includes(trimmedUsername)) {
       setInvalidUsernames((prev) => [...prev, trimmedUsername]);
     }
-  }, [username, status, message, setInvalidUsernames]); // Removed `invalidUsernames` to avoid unnecessary re-renders
+  }, [username, status, message, setInvalidUsernames, invalidUsernames]); // Removed `invalidUsernames` to avoid unnecessary re-renders
 
   return isUsernameGood;
 };

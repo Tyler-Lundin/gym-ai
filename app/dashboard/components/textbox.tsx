@@ -4,17 +4,16 @@ import { sendPrompt } from "@/app/(actions)/promptActions";
 import { format } from "date-fns";
 import { useSWRConfig } from "swr";
 import { useEffect, useState } from "react";
-import { useAtom } from "jotai";
-import { v4 } from "uuid";
+// import { useAtom } from "jotai";
 import { motion } from "framer-motion";
-import { messagesAtom } from "@/app/atoms";
+// import { messagesAtom } from "@/app/atoms";
 
 export async function sendPromptClient({ prompt }: { prompt: string }) {
   return sendPrompt({ prompt }); // ✅ Calls the Server Action indirectly
 }
 
 export default function TextBox() {
-  const [messages, setMessages] = useAtom(messagesAtom);
+  // const [messages, setMessages] = useAtom(messagesAtom);
   const { inputValue, timestamp, setState, calculateLines, textareaRef } =
     useTextbox();
   const { mutate } = useSWRConfig(); // Get mutate function
@@ -32,18 +31,19 @@ export default function TextBox() {
   const handleSend = () => {
     if (!inputValue.trim()) return;
     setState((state) => ({ ...state, inputValue: "" }));
-    const sentPrompt = { prompt: inputValue, timestamp: new Date(), id: v4() };
-    setMessages({
-      ...messages,
-      sentPrompts: [...messages.sentPrompts, sentPrompt],
-    });
-    localStorage.setItem(
-      `sent-prompt-${sentPrompt.id}`,
-      JSON.stringify(sentPrompt),
-    );
+    // const sentPrompt = { prompt: inputValue, timestamp: new Date(), id: v4() };
+    // setMessages({
+    //   ...messages,
+    //   sentPrompts: [...messages.sentPrompts, sentPrompt],
+    // });
+    // localStorage.setItem(
+    //   `sent-prompt-${sentPrompt.id}`,
+    //   JSON.stringify(sentPrompt),
+    // );
     mutate("/api/prompt/send", sendPrompt({ prompt: inputValue }), {
       throwOnError: true,
     });
+    mutate("chatEntries");
   };
 
   return (

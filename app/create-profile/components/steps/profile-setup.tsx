@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { BounceLoader } from "react-spinners";
 import { InitializeComponentProps } from "../Initialize";
 import { NextButton } from "@/app/dashboard/components/buttons";
-import StatusDot from "@/app/dashboard/components/status-dot";
 import HeightInput from "../height-input";
 import useUsernameValidation from "../../hooks/useUsernameValidation";
 import WeightInput from "../weight-input";
@@ -28,8 +27,12 @@ export default function ProfileSetup({
     invalidUsernames,
     setInvalidUsernames,
   );
-  const { isHeightValid, isFeetValid, isInchesValid, isWeightValid } =
-    useHeightWeightValidation(feet, inches, weight);
+  const {
+    isHeightValid,
+    // isFeetValid,
+    // isInchesValid,
+    isWeightValid,
+  } = useHeightWeightValidation(feet, inches, weight);
 
   useEffect(() => {
     setIsLoading(status === "LOADING");

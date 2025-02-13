@@ -3,7 +3,7 @@ import { UnitSystem } from "@prisma/client";
 import {
   InitializeMessage,
   InitializeStatus,
-} from "@/app/api/initialize/route";
+} from "@/app/api/profile/create/route";
 import useInitialize from "../hooks/useInitialize";
 
 export interface InitialUserData {

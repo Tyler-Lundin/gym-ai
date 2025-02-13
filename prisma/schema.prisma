@@ -53,6 +53,7 @@ model Exercise {
   equipment       String[] // e.g., "Barbell, Dumbbells"
   createdAt       DateTime @default(now())
   metadata        Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  entries         Entry[]
 }
 
 model Workout {
@@ -71,12 +72,13 @@ model Workout {
 }
 
 model Entry {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   userId     String?
-  user       User?    @relation(fields: [userId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id])
   workoutId  String?
-  workout    Workout? @relation(fields: [workoutId], references: [id])
+  workout    Workout?  @relation(fields: [workoutId], references: [id])
   exerciseId String?
+  exercise   Exercise? @relation(fields: [exerciseId], references: [id])
   sets       Int? // Planned sets
   reps       Int? // Planned reps
   weight     Float? // Planned weight
@@ -84,8 +86,8 @@ model Entry {
   restTime   Int? // Planned rest time between sets (in seconds)
   metadata   Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
   prompt     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now())
 }
 
 model Macrocycle {
@@ -135,13 +137,13 @@ model Microcycle {
 }
 
 model Goal {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
   description String // e.g., "Increase 1RM Bench Press by 10%"
-  targetDate  DateTime
-  completed   Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  targetDate  DateTime?
+  completed   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
   metadata    Json? // Data for tracking progress or AI integration
 }
 
