@@ -27,12 +27,12 @@ export default function Messages() {
     return (
       <AnimatePresence>
         <motion.button
-          initial={{ opacity: 0, translateX: 25 }}
+          initial={{ opacity: 0, translateY: 25 }}
           animate={{ opacity: 100, translateX: 0 }}
           transition={{ duration: 0.5 }}
-          exit={{ opacity: 0, translateX: 25 }}
+          exit={{ opacity: 0, translateY: 25 }}
           onClick={() => setState((state) => ({ ...state, isOpen: true }))}
-          className="grid absolute right-8 bottom-8 place-content-center h-16 rounded-full z-[500] aspect-square"
+          className="grid absolute left-1/2 -translate-x-1/2 bottom-8 place-content-center h-16 rounded-full z-[500] aspect-square"
         >
           <motion.div className="rounded-full border border-green-700 shadow transition-all dark:border-green-400 dark:shadow-none hover:scale-125 shadow-black backdrop-blur-sm w-fit h-fit group">
             <IoIosAdd className="text-6xl text-green-700 rounded-full transition-all dark:text-green-400 group-hover:scale-125" />
