@@ -19,72 +19,91 @@ export default function EntryComponent({
 }) {
   const entryId = String(entry.id) || String(v4());
   if (!entry.prompt) return null;
+  const hasExercise = entry.exercise;
   return (
     <motion.div
-      initial={{
-        opacity: 0.0,
-        translateX: "-50%",
-      }}
-      onClick={() => handleClick(entryId)}
+      initial={{ opacity: 0, translateX: "-50%" }}
       animate={{ opacity: 1, translateX: 0 }}
       transition={{ duration: 0.25, delay: index * 0.1 }}
+      onClick={() => handleClick(entryId)}
       key={entryId}
-      className="grid overflow-hidden relative gap-1 p-4 w-full text-left text-black dark:text-white"
+      className="grid overflow-hidden relative gap-4 p-4 w-full text-left text-black rounded-lg border dark:text-white bg-black/50 border-white/50"
     >
-      <span className="flex justify-between px-1 w-full text-sm text-gray-500 rounded-lg border border-white/50">
-        <h6 className="font-thin text-black uppercase dark:text-white">
+      {/* Date & Time */}
+      <div className="flex justify-between py-2 text-sm text-gray-300 border-b border-white/50">
+        <h6 className="font-thin uppercase">
           {format(new Date(entry.createdAt || ""), "MM/dd/yy")}
         </h6>
-
-        <h6 className="font-thin text-black uppercase dark:text-white">
+        <h6 className="font-thin uppercase">
           {format(new Date(entry.createdAt || ""), "hh:mm aa")}
         </h6>
-      </span>
-      <div className="px-1">
-        <span className="flex gap-2 items-center">
-          <p className="text-2xl">{entry?.exercise?.name}</p>
-          <p className="text-2xl">{entry.weight} lbs</p>
-          <small className="text-small">X</small>
-          <p className="text-2xl">{entry.reps} reps</p>
-        </span>
-
-        <ul className="flex gap-4">
-          <h6>muscles:</h6>
-          {entry?.exercise?.musclesTargeted.map((muscle) => (
-            <li
-              key={v4()}
-              className="px-1 text-sm rounded-lg border border-white"
-            >
-              {muscle}
-            </li>
-          ))}
-        </ul>
-
-        <ul className="flex gap-4">
-          <h6>categories:</h6>
-          {entry?.exercise?.categories.map((category) => (
-            <li
-              key={v4()}
-              className="px-1 text-sm rounded-lg border border-white"
-            >
-              {category}
-            </li>
-          ))}
-        </ul>
-
-        <span className="flex gap-4 opacity-75">
-          <p className="text-xs italic">&quot;{entry.prompt}&quot;</p>
-        </span>
-        <AnimatePresence>
-          {openEntry === entryId && (
-            <EntrySettings
-              entryId={entryId}
-              handleOpen={() => handleClick(entryId)}
-              handleDelete={() => handleDelete(entryId)}
-            />
-          )}
-        </AnimatePresence>
       </div>
+
+      {/* Exercise Info (if available) */}
+      {hasExercise && (
+        <div className="flex flex-col gap-2 px-1">
+          <div className="flex gap-2 items-center">
+            <p className="text-2xl">{entry?.exercise?.name}</p>
+            {entry.weight && <p className="text-2xl">{entry.weight} lbs</p>}
+            {entry.reps && (
+              <>
+                <small className="text-small">X</small>
+                <p className="text-2xl">{entry.reps} reps</p>
+              </>
+            )}
+          </div>
+
+          {/* Muscles Targeted */}
+          {entry?.exercise?.musclesTargeted &&
+            entry?.exercise?.musclesTargeted?.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                <h6 className="font-semibold">Muscles:</h6>
+                {entry?.exercise.musclesTargeted.map((muscle) => (
+                  <span
+                    key={v4()}
+                    className="py-1 px-2 text-sm rounded-lg border border-white"
+                  >
+                    {muscle}
+                  </span>
+                ))}
+              </div>
+            )}
+
+          {/* Exercise Categories */}
+          {entry?.exercise?.categories &&
+            entry.exercise.categories?.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                <h6 className="font-semibold">Categories:</h6>
+                {entry.exercise.categories.map((category) => (
+                  <span
+                    key={v4()}
+                    className="py-1 px-2 text-sm rounded-lg border border-white"
+                  >
+                    {category}
+                  </span>
+                ))}
+              </div>
+            )}
+        </div>
+      )}
+
+      {/* Prompt (if available) */}
+      {entry.prompt && (
+        <div className="px-1 pl-2 text-sm italic border-l-2 border-gray-400 opacity-75">
+          &quot;{entry.prompt}&quot;
+        </div>
+      )}
+
+      {/* Entry Settings (Only show if entry is open) */}
+      <AnimatePresence>
+        {openEntry === entryId && (
+          <EntrySettings
+            entryId={entryId}
+            handleOpen={() => handleClick(entryId)}
+            handleDelete={() => handleDelete(entryId)}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
