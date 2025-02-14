@@ -4,22 +4,17 @@ import { getEntries, deleteEntry } from "@/app/(actions)/entryActions";
 import { Entry } from "@prisma/client";
 import { useAtom } from "jotai";
 import { dashboardState } from "@/app/atoms";
-import useNotification from "@/app/(hooks)/useNotification";
 
 export default function useEntries() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [{ targetDate }] = useAtom(dashboardState);
-  const { sendNotification } = useNotification();
   const {
     data: entries,
     mutate: refreshEntries,
     isLoading,
   } = useSWR(
-    "chatEntries",
-    () => {
-      if (!targetDate) return;
-      return getEntries(targetDate);
-    },
+    targetDate ? [targetDate, "entries"] : null,
+    ([d]) => getEntries(d),
     {
       refreshInterval: 5000, // Polling for updates (adjust as needed)
     },

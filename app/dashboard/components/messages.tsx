@@ -41,7 +41,7 @@ export default function Messages() {
       </AnimatePresence>
     );
   return (
-    <div className="flex fixed top-0 right-0 bottom-0 left-0 z-40 flex-col pt-24 w-screen h-dvh bg-neutral-200 backdrop-blur-sm dark:bg-black/45">
+    <div className="flex fixed top-0 right-0 bottom-0 left-0 z-40 flex-col pt-32 w-screen h-dvh bg-neutral-200 backdrop-blur-sm dark:bg-black/45">
       <ChatEntries />
       <AnimatePresence>
         <TextBox />

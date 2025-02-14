@@ -13,7 +13,13 @@ import {
 import { getUserId } from "./userActions";
 
 // Send the prompt and process it
-export async function sendPrompt({ prompt }: { prompt: string }) {
+export async function sendPrompt({
+  prompt,
+  timestamp,
+}: {
+  prompt: string;
+  timestamp: Date;
+}) {
   const userId = await getUserId();
   if (!userId) return null;
 
@@ -22,6 +28,7 @@ export async function sendPrompt({ prompt }: { prompt: string }) {
     data: {
       prompt,
       userId,
+      createdAt: timestamp,
     },
   });
   if (!newEntry) return null;
