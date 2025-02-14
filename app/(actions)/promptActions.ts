@@ -1,16 +1,9 @@
 "use server";
 import { prisma } from "@/libs/prisma";
-import { openai } from "@ai-sdk/openai";
 import { Prisma } from "@prisma/client";
-import { generateObject } from "ai";
-import { processInputPrompt as system } from "../api/ai/(prompts)/process-input-prompt";
-import {
-  EntrySchema,
-  ExerciseSchema,
-  ProcessPromptSchema,
-  zProcessedPrompt,
-} from "@/types/zod-schema";
+import { EntrySchema, ExerciseSchema } from "@/types/zod-schema";
 import { getUserId } from "./userActions";
+import { processPrompt } from "./ai-actions";
 
 // Send the prompt and process it
 export async function sendPrompt({
@@ -23,7 +16,6 @@ export async function sendPrompt({
   const userId = await getUserId();
   if (!userId) return null;
 
-  // Create the entry in the database
   const newEntry = await prisma.entry.create({
     data: {
       prompt,
@@ -31,16 +23,16 @@ export async function sendPrompt({
       createdAt: timestamp,
     },
   });
-  if (!newEntry) return null;
+  if (!newEntry)
+    return { message: "Failure to create new entry!", status: "ERROR" };
 
-  // Process the prompt and extract data
   const processedPrompt = await processPrompt({ entry: newEntry });
   if (!processedPrompt) return newEntry;
+  const { entry, exercise } = processedPrompt;
 
-  // Validate each part of the processed prompt and only create/update if valid
   const updatePromises = [];
 
-  // Entry - Update or create only if data is valid
+  if (!entry) return newEntry;
   const parsedEntry = EntrySchema.safeParse(processedPrompt.entry);
   if (parsedEntry.success) {
     updatePromises.push(
@@ -53,6 +45,7 @@ export async function sendPrompt({
     );
   }
 
+  if (!exercise) return newEntry;
   const parsedExercise = ExerciseSchema.safeParse(processedPrompt.exercise);
   if (parsedExercise.success) {
     const {
@@ -105,24 +98,4 @@ export async function sendPrompt({
 
   // Return the updated data
   return results;
-}
-
-// Function to process the prompt and get validated data
-export async function processPrompt({
-  entry,
-}: {
-  entry: Prisma.EntryGetPayload<object>;
-}): Promise<zProcessedPrompt | null> {
-  const { object } = await generateObject({
-    model: openai("gpt-4"),
-    system,
-    prompt: entry.prompt,
-    schema: ProcessPromptSchema,
-  });
-
-  console.log("Generated Object from processPrompt in promptActions:", object);
-
-  const processed = ProcessPromptSchema.safeParse(object);
-  if (!processed.success) return null;
-  return processed.data;
 }

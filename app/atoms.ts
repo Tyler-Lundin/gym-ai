@@ -2,6 +2,7 @@ import { atom } from "jotai";
 import { Notification } from "./(components)/notification";
 import { DashboardState } from "./dashboard/hooks/useDashboard";
 import { MessagesState } from "./dashboard/components/messages";
+import { User } from "@prisma/client";
 
 export const dashboardState = atom<DashboardState>({
   targetDate: null,
@@ -22,6 +23,8 @@ export const messagesAtom = atom<MessagesState>({
 
 export const appState = atom<{
   notifications: Notification[];
+  user: User | null;
 }>({
   notifications: [],
+  user: null,
 });

@@ -16,7 +16,7 @@ export default function RootLayout({
     <ClerkProvider>
       <JotaiProvider>
         <html lang="en">
-          <body className="overflow-hidden w-screen h-screen bg-black">
+          <body className="overflow-hidden w-screen bg-black h-dvh">
             {children}
           </body>
         </html>

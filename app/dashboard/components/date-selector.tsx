@@ -40,18 +40,18 @@ export default function DateSelector() {
           <motion.div
             initial={{ opacity: 0, translateX: "-50%", translateY: "-50%" }}
             animate={{ opacity: 100, translateX: "-50%", translateY: "-50%" }}
-            className="flex relative top-1/2 left-1/2 p-4 text-2xl border bg-black/50 border-white/25 translate-all"
+            className="flex relative top-1/2 left-1/2 p-4 w-full text-2xl border bg-black/50 border-white/25 translate-all"
           >
             <button
               onClick={jumpToToday}
               disabled={isToday}
-              className="absolute -left-2 top-1/2 p-2 text-black bg-yellow-500 rounded-lg border border-white -translate-x-full -translate-y-1/2 disabled:opacity-40"
+              className="absolute left-2 -bottom-2 p-2 text-black bg-yellow-500 rounded-lg border border-white translate-x-full translate-y-full disabled:opacity-40"
             >
               <IoMdRedo />
             </button>
             <button
               onClick={close}
-              className="absolute -right-2 top-1/2 p-2 text-black bg-green-500 rounded-lg border border-white translate-x-full -translate-y-1/2"
+              className="absolute right-2 -bottom-2 p-2 text-black bg-green-500 rounded-lg border border-white -translate-x-full translate-y-full"
             >
               <IoMdCheckmark />
             </button>
@@ -59,7 +59,7 @@ export default function DateSelector() {
             <button onClick={handlePrevious} className="px-8">
               <IoMdArrowBack />
             </button>
-            {isToday ? "TODAY" : targetDate && format(targetDate, "MM-dd-yy")}
+            {isToday ? " Today " : targetDate && format(targetDate, "MM-dd-yy")}
             <button
               disabled={isToday}
               onClick={handleNext}

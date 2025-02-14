@@ -34,7 +34,7 @@ export default function TextBox() {
       initial={{ opacity: 0, translateX: -25 }}
       animate={{ opacity: 100, translateX: 0 }}
       exit={{ opacity: 0, translateX: -25 }}
-      className="grid gap-2 p-4 pb-8 bg-white border-black shadow-md md:p-8 md:px-8 dark:bg-black border-y min-h-20 z-[400] backdrop-blur-md h-min"
+      className="grid gap-2 p-4 pb-8 bg-white border-black shadow-md md:p-8 md:px-8 dark:text-white dark:bg-black border-y min-h-20 z-[400] backdrop-blur-md h-min"
     >
       {/* Textarea */}
       <div className="flex">
@@ -58,14 +58,14 @@ export default function TextBox() {
             setState((state) => ({ ...state, inputValue: e.target.value }));
           }}
           placeholder="Type here"
-          className="relative z-10 p-2 w-full text-2xl text-black rounded-l-lg border border-black resize-none focus:outline-none placeholder-black/50"
+          className="relative z-10 p-2 w-full text-2xl text-black bg-white rounded-l-lg border border-black resize-none dark:text-white dark:bg-black focus:outline-none placeholder-black/50 dark:border-white/50 dark:placeholder-white/50"
         />
 
         {/* Buttons */}
         <button
           onClick={handleSend}
           id="send_btn"
-          className="py-1 px-4 font-bold text-black bg-blue-400 rounded-r-lg border border-blue-700 transition-all transform hover:bg-green-300 focus:bg-green-300"
+          className="py-1 px-4 font-bold text-green-500 rounded-r-lg border border-green-500 transition-all transform hover:bg-green-300 focus:bg-green-300"
         >
           Send
         </button>

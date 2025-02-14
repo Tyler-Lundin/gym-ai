@@ -99,8 +99,8 @@ export const NoteSchema = z.object({
 });
 
 export const ProcessPromptSchema = z.object({
-  exercise: ExerciseSchema,
-  entry: EntrySchema,
+  exercise: ExerciseSchema.nullable(),
+  entry: EntrySchema.nullable(),
 });
 
 // Infer TypeScript types

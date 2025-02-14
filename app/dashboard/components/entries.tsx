@@ -19,7 +19,7 @@ export default function ChatEntries() {
   return (
     <div
       ref={containerRef}
-      className="grid overflow-y-auto flex-grow space-y-4 h-full gap-[1px] basis-auto no-scrollbar border-y-black/25 dark:border-y-white/25"
+      className="overflow-y-auto flex-grow space-y-4 h-full basis-auto no-scrollbar border-y-black/25 dark:border-y-white/25"
     >
       {isLoading && (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

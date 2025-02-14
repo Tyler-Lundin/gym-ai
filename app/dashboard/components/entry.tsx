@@ -1,8 +1,13 @@
 import { v4 } from "uuid";
 import { AnimatePresence, motion } from "framer-motion";
 import { format } from "date-fns";
-import { IoIosTrash, IoMdCreate } from "react-icons/io";
-import { Prisma } from "@prisma/client";
+import { IoIosTrash, IoMdClose, IoMdCreate } from "react-icons/io";
+import { Prisma, UnitSystem } from "@prisma/client";
+import { Roboto } from "next/font/google";
+import { useAtom } from "jotai";
+import { appState } from "@/app/atoms";
+import getUnits from "../util/getUnits";
+const font = Roboto({ subsets: ["latin"], weight: ["300", "500", "700"] });
 
 export default function EntryComponent({
   index,
@@ -18,19 +23,23 @@ export default function EntryComponent({
   openEntry: string | null;
 }) {
   const entryId = String(entry.id) || String(v4());
-  if (!entry.prompt) return null;
-  const hasExercise = entry.exercise;
+  const [{ user }] = useAtom(appState);
+  if (!entry.prompt || !user) return null;
+  const units = user.units as UnitSystem;
+  const hasExercise = entry.exercise?.name;
+  console.log({ entry });
   return (
     <motion.div
       initial={{ opacity: 0, translateX: "-50%" }}
       animate={{ opacity: 1, translateX: 0 }}
       transition={{ duration: 0.25, delay: index * 0.1 }}
       onClick={() => handleClick(entryId)}
+      style={font.style}
       key={entryId}
-      className="grid overflow-hidden relative gap-4 p-4 w-full text-left text-black rounded-lg border dark:text-white bg-black/50 border-white/50"
+      className="grid overflow-hidden relative gap-4 p-2 w-full text-left text-black dark:text-white border-y bg-black/50 dark:border-white/25"
     >
       {/* Date & Time */}
-      <div className="flex justify-between py-2 text-sm text-gray-300 border-b border-white/50">
+      <div className="flex justify-between pb-2 text-sm text-gray-300 border-b border-white/50">
         <h6 className="font-thin uppercase">
           {format(new Date(entry.createdAt || ""), "MM/dd/yy")}
         </h6>
@@ -44,11 +53,19 @@ export default function EntryComponent({
         <div className="flex flex-col gap-2 px-1">
           <div className="flex gap-2 items-center">
             <p className="text-2xl">{entry?.exercise?.name}</p>
-            {entry.weight && <p className="text-2xl">{entry.weight} lbs</p>}
+            {entry.weight && (
+              <p className="p-2 text-right rounded-md border border-white text-md">
+                {entry.weight}
+                <small>{getUnits({ units }).weight}</small>
+              </p>
+            )}
             {entry.reps && (
               <>
-                <small className="text-small">X</small>
-                <p className="text-2xl">{entry.reps} reps</p>
+                <IoMdClose />
+                <p className="p-2 text-right rounded-md border border-white text-md">
+                  {entry.reps}
+                  <small>reps</small>
+                </p>
               </>
             )}
           </div>
@@ -61,7 +78,7 @@ export default function EntryComponent({
                 {entry?.exercise.musclesTargeted.map((muscle) => (
                   <span
                     key={v4()}
-                    className="py-1 px-2 text-sm rounded-lg border border-white"
+                    className="px-2 text-sm rounded-lg border border-white"
                   >
                     {muscle}
                   </span>
@@ -77,7 +94,7 @@ export default function EntryComponent({
                 {entry.exercise.categories.map((category) => (
                   <span
                     key={v4()}
-                    className="py-1 px-2 text-sm rounded-lg border border-white"
+                    className="px-2 text-sm rounded-lg border border-white"
                   >
                     {category}
                   </span>
