@@ -5,11 +5,13 @@ import { IoIosTrash, IoMdCreate } from "react-icons/io";
 import { Prisma } from "@prisma/client";
 
 export default function EntryComponent({
+  index,
   entry,
   openEntry,
   handleClick,
   handleDelete,
 }: {
+  index: number;
   entry: Prisma.EntryGetPayload<{ include: { exercise: true } }>;
   handleClick: (entryId: string) => void;
   handleDelete: (entryId: string) => void;
@@ -21,10 +23,11 @@ export default function EntryComponent({
     <motion.div
       initial={{
         opacity: 0.0,
+        translateX: "-50%",
       }}
       onClick={() => handleClick(entryId)}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.75 }}
+      animate={{ opacity: 1, translateX: 0 }}
+      transition={{ duration: 0.25, delay: index * 0.1 }}
       key={entryId}
       className="grid overflow-hidden relative gap-1 p-4 w-full text-left text-black dark:text-white"
     >

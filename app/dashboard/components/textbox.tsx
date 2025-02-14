@@ -21,10 +21,12 @@ export default function TextBox() {
   const [dateString, setDateString] = useState("December 04 1998");
 
   useEffect(() => {
+    if (!timestamp) return;
     setTimeString(format(timestamp, "hh:mm:ss aa"));
   }, [timestamp]);
 
   useEffect(() => {
+    if (!timestamp) return;
     setDateString(format(timestamp, "MM/dd/yy"));
   }, [timestamp]);
 

@@ -14,10 +14,10 @@ import { AnimatePresence, motion } from "framer-motion";
 
 // Define notification types with associated styles/icons
 const notificationTypes = {
-  ERROR: { color: "bg-red-400", icon: <MdError /> },
-  SUCCESS: { color: "bg-green-400", icon: <MdCheckCircle /> },
-  INFO: { color: "bg-blue-400", icon: <MdInfo /> },
-  WARNING: { color: "bg-yellow-400 ", icon: <MdWarning /> },
+  ERROR: { color: "bg-red-500", icon: <MdError /> },
+  SUCCESS: { color: "bg-green-500", icon: <MdCheckCircle /> },
+  INFO: { color: "bg-blue-500", icon: <MdInfo /> },
+  WARNING: { color: "bg-yellow-500 ", icon: <MdWarning /> },
   MESSAGE: { color: "bg-black text-white", icon: <MdMessage /> },
 };
 
@@ -67,7 +67,7 @@ export default function Notifications() {
   }, []);
 
   return (
-    <div className="overflow-hidden absolute top-0 right-0 p-3 space-y-2 pointer-events-none z-[100]">
+    <div className="overflow-hidden absolute top-0 right-0 p-3 space-y-2 pointer-events-none z-[500]">
       <AnimatePresence>
         {[...showing].reverse().map((n) => (
           <NotificationComponent
@@ -121,7 +121,7 @@ function Base({
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 50, scale: 0.9 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.18 }}
       whileHover={{ scale: 1.1 }}
       className={`h-12 z-[101] ${className} pointer-events-auto cursor-pointer flex items-center gap-2`}
     >

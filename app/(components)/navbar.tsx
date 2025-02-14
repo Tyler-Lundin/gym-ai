@@ -18,7 +18,7 @@ export default function Navbar() {
       animate={{ opacity: 100, translateY: 0 }}
       transition={{ duration: 1 }}
       id="NAV_BAR"
-      className="grid overflow-hidden h-14 bg-gradient-to-l rounded-lg border border-black/25 via-black/70 from-green-950/80 to-black/65 backdrop-blur-sm z-[500] dark:border-white/25"
+      className="grid overflow-hidden h-14 bg-gradient-to-l rounded-lg rounded-b-none border border-black/25 via-black/70 from-green-950/80 to-black/65 backdrop-blur-sm z-[500] dark:border-white/25"
     >
       <CloseMessagesButton
         isOpen={isMessagesOpen}

@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import useTimestamp from "./useTimestamp";
 
 export default function useTextbox() {
-  const [{ inputValue, timestamp, isFocused }, setState] = useState({
+  const [{ inputValue, isFocused }, setState] = useState({
     inputValue: null as string | null,
-    timestamp: null as Date | null,
     isOpen: false as boolean,
     isFocused: false as boolean,
   });
+
+  const timestamp = useTimestamp();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [lineHeight, setLineHeight] = useState(32);
 
@@ -26,17 +28,6 @@ export default function useTextbox() {
   }, [lineHeight]);
 
   useEffect(() => {
-    const updateTimestamp = () => {
-      setState((state) => ({ ...state, timestamp: new Date() }));
-    };
-
-    updateTimestamp();
-    const intervalId = setInterval(updateTimestamp, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
     if (inputValue && inputValue.length > 329)
       setState((state) => ({
         ...state,
@@ -47,7 +38,7 @@ export default function useTextbox() {
   return {
     inputValue: inputValue || "",
     isFocused: isFocused || "",
-    timestamp: timestamp || new Date(),
+    timestamp,
     setState,
     calculateLines,
     textareaRef,

@@ -1,15 +1,25 @@
 import useSWR, { mutate } from "swr";
 import { useState, useEffect, useRef } from "react";
-import { getEntries } from "@/app/(actions)/entryActions";
+import { getEntries, deleteEntry } from "@/app/(actions)/entryActions";
 import { Entry } from "@prisma/client";
-
-const fetcher = getEntries;
+import { useAtom } from "jotai";
+import { dashboardState } from "@/app/atoms";
+import useNotification from "@/app/(hooks)/useNotification";
 
 export default function useEntries() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { data: entries, mutate: refreshEntries } = useSWR(
+  const [{ targetDate }] = useAtom(dashboardState);
+  const { sendNotification } = useNotification();
+  const {
+    data: entries,
+    mutate: refreshEntries,
+    isLoading,
+  } = useSWR(
     "chatEntries",
-    fetcher,
+    () => {
+      if (!targetDate) return;
+      return getEntries(targetDate);
+    },
     {
       refreshInterval: 5000, // Polling for updates (adjust as needed)
     },
@@ -25,7 +35,7 @@ export default function useEntries() {
   }, [entries]);
 
   const handleDelete = async (id: string) => {
-    await fetch(`/api/entries/${id}`, { method: "DELETE" });
+    await deleteEntry({ id });
 
     // Optimistic update: remove the deleted entry from cache
     mutate(
@@ -47,5 +57,6 @@ export default function useEntries() {
     handleClick,
     openEntry,
     refreshEntries,
+    isLoading,
   };
 }
