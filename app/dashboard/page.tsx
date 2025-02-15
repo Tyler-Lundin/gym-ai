@@ -7,6 +7,7 @@ import { prisma } from "@/libs/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import ClientDataLoader from "../(components)/client-data-loader";
+import UserStats from "./components/user-stats";
 
 export default async function Dashboard() {
   const auth = await currentUser();
@@ -24,6 +25,7 @@ export default async function Dashboard() {
           <DateSelector />
         </span>
         <Messages />
+        <UserStats user={user} />
       </main>
     </Background>
   );

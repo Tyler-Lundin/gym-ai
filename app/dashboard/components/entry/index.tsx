@@ -50,7 +50,7 @@ export default function EntryComponent({
       onClick={() => handleClick(entryId)}
       style={font.style}
       key={entryId}
-      className="grid relative flex-row gap-4 p-2 pt-5 w-full text-left text-black rounded-lg border dark:text-white max-w-1/2 bg-black/50 dark:border-white/25"
+      className="grid relative flex-row gap-4 p-2 pt-5 w-full text-left text-black rounded-lg border dark:text-white max-w-1/2 bg-black/50 h-min dark:border-white/25"
     >
       <DateTimeInformation createdAt={entry.createdAt} />
       <h1 id="MAIN_TITLE" className="text-2xl font-semibold">
