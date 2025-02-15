@@ -72,7 +72,7 @@ export default function DateSelector() {
       )}
       <button
         onClick={toggle}
-        className="top-0 p-2 text-lg font-black text-center rounded-b-md border-b w-fit bg-black/50 backdrop-blur-sm border-x h-min text-blue-250 dark:border-white/25"
+        className="top-0 p-2 text-lg font-black text-center rounded-b-md border-b dark:text-green-400 w-fit backdrop-blur-sm border-x h-min dark:border-green-400/75"
       >
         {targetDate && format(targetDate, "MM-dd-yy")}
       </button>
