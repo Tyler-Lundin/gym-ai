@@ -1,13 +1,19 @@
 "use server";
 
-// import { prisma } from "@/libs/prisma";
-import { User } from "@prisma/client";
+import { UserStats } from "@prisma/client";
 
-export default async function UserStats({ user }: { user: User }) {
+export default async function UserStatsComponent({
+  stats,
+}: {
+  stats: UserStats;
+}) {
   return (
     <div className="bg-white dark:text-white dark:bg-black">
-      <h6>{user.totalReps}</h6>
-      <h6>{user.totalWeight}</h6>
+      <h6>{stats.totalReps}</h6>
+      <h6>{stats.totalWeight}</h6>
+      <h6>{stats.totalEntries}</h6>
+      <h6>{stats.totalWeight}</h6>
+      <h6>{stats.mood}</h6>
     </div>
   );
 }

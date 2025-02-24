@@ -2,7 +2,6 @@
 import { useAtom } from "jotai";
 import { useEffect, useState, useCallback } from "react";
 import { appState } from "../atoms";
-import { v4 as uuid } from "uuid";
 import {
   MdError,
   MdCheckCircle,
@@ -14,11 +13,11 @@ import { AnimatePresence, motion } from "framer-motion";
 
 // Define notification types with associated styles/icons
 const notificationTypes = {
-  ERROR: { color: "bg-red-500", icon: <MdError /> },
-  SUCCESS: { color: "bg-green-500", icon: <MdCheckCircle /> },
-  INFO: { color: "bg-blue-500", icon: <MdInfo /> },
-  WARNING: { color: "bg-yellow-500 ", icon: <MdWarning /> },
-  MESSAGE: { color: "bg-black text-white", icon: <MdMessage /> },
+  ERROR: { color: "bg-red-500/75", icon: <MdError /> },
+  SUCCESS: { color: "bg-green-500/75", icon: <MdCheckCircle /> },
+  INFO: { color: "bg-blue-500/75", icon: <MdInfo /> },
+  WARNING: { color: "bg-yellow-500/75 ", icon: <MdWarning /> },
+  MESSAGE: { color: "bg-black text-white/75", icon: <MdMessage /> },
 };
 
 export interface Notification {
@@ -34,49 +33,46 @@ export type NotificationTypes =
   | "INFO"
   | "MESSAGE";
 
-const DEFAULT_NOTIFICATION_TIMER = 9000;
+const DEFAULT_NOTIFICATION_TIMER = 4500;
 
 export default function Notifications() {
   const [{ notifications }] = useAtom(appState);
-  const [showing, setShowing] = useState<Notification[]>([]);
+  const [notification, setNotification] = useState<Notification | null>(null);
 
   // Initialize notifications after mount to avoid hydration mismatch
   useEffect(() => {
-    setShowing([
-      ...notifications.map((notif) => ({ ...notif, id: uuid() })), // Ensure unique IDs
-    ]);
+    const len = notifications.length;
+    const latestNotification = notifications[len - 1];
+    setNotification(latestNotification || null);
   }, [notifications]);
 
   // Automatically remove notifications after a timeout
   useEffect(() => {
-    const timers = showing.map((notif, i) =>
-      setTimeout(
-        () => {
-          setShowing((prev) => prev.filter((n) => n.id !== notif.id));
-        },
-        DEFAULT_NOTIFICATION_TIMER + 1000 * i,
-      ),
-    );
+    const notificationTimer = setTimeout(() => {
+      setNotification(null);
+    }, DEFAULT_NOTIFICATION_TIMER);
 
-    return () => timers.forEach(clearTimeout);
-  }, [showing]);
+    return () => clearTimeout(notificationTimer);
+  }, [notification]);
 
   // Handle dismissing notifications
   const dismissNotification = useCallback((id: string) => {
-    setShowing((prev) => prev.filter((notif) => notif.id !== id));
+    setNotification(null);
   }, []);
+
+  const n = notification;
 
   return (
     <div className="overflow-hidden absolute top-0 right-0 p-3 space-y-2 pointer-events-none z-[500]">
       <AnimatePresence>
-        {[...showing].reverse().map((n) => (
+        {n && (
           <NotificationComponent
             key={n.id}
             type={n.type}
             message={n.message}
             onClick={() => dismissNotification(n.id)}
           />
-        ))}
+        )}
       </AnimatePresence>
     </div>
   );
@@ -99,7 +95,7 @@ function NotificationComponent({
       className={`px-4 py-2 text-black rounded-lg w-fit ${color}`}
       onClick={onClick}
     >
-      <h1>{message}</h1>
+      <h1 className="text-2xl font-bold uppercase">{message}</h1>
       {icon}
     </Base>
   );
@@ -122,7 +118,7 @@ function Base({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 50, scale: 0.9 }}
       transition={{ duration: 0.18 }}
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ scale: 1.01 }}
       className={`h-12 z-[101] ${className} pointer-events-auto cursor-pointer flex items-center gap-2`}
     >
       {children}

@@ -15,24 +15,19 @@ enum UnitSystem {
 
 model User {
   // User
-  id        String     @id @unique @default(cuid())
+  id        String      @id @unique @default(cuid())
   authId    String
   username  String
-  email     String?    @unique
-  createdAt DateTime   @default(now())
+  email     String?     @unique
+  createdAt DateTime    @default(now())
   // Settings
   isInit    Boolean // is initialized or not
   units     UnitSystem // enum { IMPERIAL or METRIC }
   // Stats ? - Optional
-  height_ft Int?
-  height_in Int?
-  height_cm Int?
-  weight    Int?
+  stats     UserStats[]
 
-  // Combined Macrocycle stats
-  totalWorkouts Int?
-  totalWeight   Float?
-  totalReps     Int?
+  heightIn Int @default(0)
+  heightFt Int @default(0)
 
   // Relationships
   macros   Macrocycle[] // ~ 6 months - groups mesos 
@@ -42,6 +37,20 @@ model User {
   notes    Note[]
   metadata Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
   entries  Entry[]
+}
+
+model UserStats {
+  id            String   @id @unique @default(cuid())
+  createdAt     DateTime @default(now())
+  userId        String
+  user          User?    @relation(fields: [userId], references: [id])
+  totalWeight   Int      @default(0)
+  totalReps     Int      @default(0)
+  totalEntries  Int      @default(0)
+  totalWorkouts Int      @default(0)
+  bodyweightLbs Int      @default(0)
+  bodyweightKgs Int      @default(0)
+  mood          String
 }
 
 model Exercise {
@@ -57,24 +66,29 @@ model Exercise {
 }
 
 model Workout {
-  id          String      @id @default(cuid())
-  name        String // e.g., "Upper Body Day"
-  date        DateTime    @default(now())
-  userId      String
-  entries     Entry[] // Planned exercises for the workout
-  cycleId     String?
-  micro       Microcycle? @relation(fields: [cycleId], references: [id])
-  notes       String? // General notes about the workout
-  totalWeight Float?
-  totalReps   Int?
-  metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
-  createdAt   DateTime    @default(now())
+  id             String     @id @default(cuid())
+  name           String // e.g., "Upper Body Day"
+  userId         String
+  entries        Entry[] // Planned exercises for the workout
+  totalWeight    Float      @default(0)
+  totalReps      Int        @default(0)
+  totalExercises Int        @default(0)
+  metadata       Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  createdAt      DateTime   @default(now())
+  endedAt        DateTime?
+  microcycleId   String
+  microcycle     Microcycle @relation(fields: [microcycleId], references: [id])
 }
 
 model Entry {
-  id         String    @id @default(cuid())
-  userId     String?
-  user       User?     @relation(fields: [userId], references: [id])
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  prompt    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  //optional fields
   workoutId  String?
   workout    Workout?  @relation(fields: [workoutId], references: [id])
   exerciseId String?
@@ -85,9 +99,6 @@ model Entry {
   duration   Int? // Planned duration (e.g., for cardio)
   restTime   Int? // Planned rest time between sets (in seconds)
   metadata   Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
-  prompt     String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @default(now())
 }
 
 model Macrocycle {
@@ -99,41 +110,35 @@ model Macrocycle {
   description String? // e.g., "Plan focused on strength and hypertrophy."
   startDate   DateTime
   endDate     DateTime?
-  totalWeight Float?
-  totalReps   Int?
   metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
   createdAt   DateTime    @default(now())
 }
 
 model Mesocycle {
-  id          String       @id @default(cuid())
-  name        String // e.g., "Hypertrophy Phase"
-  userId      String
-  user        User         @relation(fields: [userId], references: [id])
-  startDate   DateTime
-  endDate     DateTime?
-  macroId     String?
-  macro       Macrocycle?  @relation(fields: [macroId], references: [id])
-  notes       String? // Notes about the cycle
-  metadata    Json? // Data for tracking progress
-  Microcycle  Microcycle[]
-  totalWeight Float?
-  totalReps   Int?
-  createdAt   DateTime     @default(now())
+  id         String       @id @default(cuid())
+  name       String // e.g., "Hypertrophy Phase"
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  startDate  DateTime
+  endDate    DateTime?
+  macroId    String?
+  macro      Macrocycle?  @relation(fields: [macroId], references: [id])
+  notes      String? // Notes about the cycle
+  metadata   Json? // Data for tracking progress
+  Microcycle Microcycle[]
+  createdAt  DateTime     @default(now())
 }
 
 model Microcycle {
-  id          String     @id @default(cuid())
-  userId      String
-  user        User       @relation(fields: [userId], references: [id])
-  startDate   DateTime
-  endDate     DateTime?
-  mesoId      String?
-  meso        Mesocycle? @relation(fields: [mesoId], references: [id])
-  workouts    Workout[]
-  totalWeight Float?
-  totalReps   Int?
-  createdAt   DateTime   @default(now())
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  startDate DateTime
+  endDate   DateTime?
+  workouts  Workout[]
+  mesoId    String?
+  meso      Mesocycle? @relation(fields: [mesoId], references: [id])
+  createdAt DateTime   @default(now())
 }
 
 model Goal {
@@ -141,7 +146,7 @@ model Goal {
   userId      String
   user        User      @relation(fields: [userId], references: [id])
   description String // e.g., "Increase 1RM Bench Press by 10%"
-  targetDate  DateTime?
+  endDate     DateTime?
   completed   Boolean   @default(false)
   createdAt   DateTime  @default(now())
   metadata    Json? // Data for tracking progress or AI integration

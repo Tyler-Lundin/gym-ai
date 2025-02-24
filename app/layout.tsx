@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Provider as JotaiProvider } from "jotai";
+import Notifications from "./(components)/notification";
 
 export const metadata = {
   title: "Zen Fit",
@@ -16,7 +17,8 @@ export default function RootLayout({
     <ClerkProvider>
       <JotaiProvider>
         <html lang="en">
-          <body className="overflow-hidden w-screen bg-black h-dvh">
+          <body className="overflow-hidden w-screen bg-neutral-200 h-dvh dark:bg-neutral-950">
+            <Notifications />
             {children}
           </body>
         </html>

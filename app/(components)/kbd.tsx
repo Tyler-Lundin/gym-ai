@@ -1,9 +1,14 @@
-export function Enter() {
+export function Enter({ label }: { label: string }) {
   return (
-    <kbd className="grid relative items-center px-2 text-xs font-light text-white bg-black rounded-sm border border-black scale-75">
-      Enter
-      <span className="absolute top-0 left-0 w-full h-full border scale-90 border-white/50" />
-    </kbd>
+    <span className="flex gap-2 px-8">
+      <label className="text-lg font-bold uppercase">
+        {label ? label : null}
+      </label>
+      <kbd className="grid relative items-center px-2 w-16 text-xs font-light text-white bg-black rounded-sm border border-black scale-75">
+        Enter
+        <span className="absolute top-0 left-0 w-full h-full border scale-90 border-white/50" />
+      </kbd>
+    </span>
   );
 }
 
@@ -16,11 +21,16 @@ export function Shift() {
   );
 }
 
-export function Escape() {
+export function Escape({ label }: { label: string }) {
   return (
-    <kbd className="grid relative items-center px-1 max-h-8 text-xs font-light text-white bg-black rounded-sm border border-black scale-75 min-h-6 aspect-square">
-      Esc
-      <span className="absolute top-0 left-0 w-full h-full border scale-90 border-white/50" />
-    </kbd>
+    <span className="flex gap-2 px-8">
+      <label className="text-lg font-bold uppercase">
+        {label ? label : null}
+      </label>
+      <kbd className="grid relative items-center px-2 w-16 text-xs font-light text-white bg-black rounded-sm border border-black scale-75">
+        Escape
+        <span className="absolute top-0 left-0 w-full h-full border scale-90 border-white/50" />
+      </kbd>
+    </span>
   );
 }

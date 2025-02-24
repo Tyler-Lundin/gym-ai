@@ -18,6 +18,7 @@ export default function useNotification() {
           message,
           type,
         };
+        console.log({ message, type });
 
         setNotifications((prevState) => ({
           ...prevState,

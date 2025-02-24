@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 
 const USERNAME_MIN_LENGTH = 3; // Adjust as needed

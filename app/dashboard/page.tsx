@@ -1,4 +1,3 @@
-// import NotificationProvider from "../(components)/notification";
 import Messages from "./components/messages";
 import Navbar from "../(components)/navbar";
 import Background from "../(components)/background";
@@ -7,7 +6,7 @@ import { prisma } from "@/libs/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import ClientDataLoader from "../(components)/client-data-loader";
-import UserStats from "./components/user-stats";
+import UserStatsComponent from "./components/user-stats";
 
 export default async function Dashboard() {
   const auth = await currentUser();
@@ -16,6 +15,12 @@ export default async function Dashboard() {
   const user = await prisma.user.findFirst({ where: { authId } });
   if (!user) redirect("/create-profile");
   const serializedUser = JSON.stringify(user);
+
+  const stats = await prisma.userStats.findFirst({
+    where: { userId: user.id },
+  });
+  if (!stats) redirect("/create-profile");
+
   return (
     <Background>
       <ClientDataLoader serializedUser={serializedUser} />
@@ -25,7 +30,7 @@ export default async function Dashboard() {
           <DateSelector />
         </span>
         <Messages />
-        <UserStats user={user} />
+        <UserStatsComponent stats={stats} />
       </main>
     </Background>
   );

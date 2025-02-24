@@ -29,9 +29,12 @@ const Background = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <main style={styles.container}>
+    <main className="overflow-hidden relative w-screen h-dvh">
       <div className="relative z-50">{children}</div>
-      <div style={{ ...styles.layer, ...styles.layer1 }} />
+      <div
+        className="invert dark:invert-0"
+        style={{ ...styles.layer, ...styles.layer1 }}
+      />
       <div style={{ ...styles.layer, ...styles.layer2 }} />
       <div style={{ ...styles.layer, ...styles.layer3 }} />
     </main>
@@ -39,13 +42,6 @@ const Background = ({ children }: { children: React.ReactNode }) => {
 };
 
 const styles: Record<string, React.CSSProperties> = {
-  container: {
-    position: "relative",
-    width: "100vw",
-    height: "100vh",
-    overflow: "hidden",
-    background: "rgb(4,4,4)",
-  },
   layer: {
     position: "absolute",
     top: "-50%", // Expand beyond the viewport for smooth cropping

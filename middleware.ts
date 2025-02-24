@@ -6,6 +6,7 @@ import {
   ClerkMiddlewareAuthObject,
 } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+
 export default clerkMiddleware();
 
 export const config = {
@@ -15,6 +16,6 @@ export const config = {
     // Always run for API routes
     "/(api|trpc)(.*)",
     "/dashboard/:path*",
-    "/",
+    "/create-profile",
   ],
 };
