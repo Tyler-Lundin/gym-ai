@@ -2,16 +2,13 @@
 import StatusDot from "@/app/dashboard/components/status-dot";
 import { motion } from "framer-motion";
 import useUsernameStatus from "../../hooks/useUsernameStatus";
-
 import { Bebas_Neue } from "next/font/google";
-import { SyncLoader } from "react-spinners";
-import { StepControlProps } from "@/types/create-profile-state";
 import { useAtom } from "jotai";
 import { createProfileState } from "@/app/atoms";
 
 const font = Bebas_Neue({ subsets: ["latin"], weight: "400" });
 
-export default function UsernameInput({ handleNextAction }: StepControlProps) {
+export default function UsernameStep() {
   const [state, setState] = useAtom(createProfileState);
   const { status } = useUsernameStatus();
 
@@ -30,12 +27,6 @@ export default function UsernameInput({ handleNextAction }: StepControlProps) {
         <input
           className="p-2 w-full text-2xl text-black bg-white rounded-lg border border-black dark:text-white dark:bg-black dark:border-white"
           value={state.username || ""}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleNextAction();
-            }
-          }}
           onChange={(e) => {
             if (e.target.value.length > 20) return;
             setState((s) => ({

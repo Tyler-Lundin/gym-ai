@@ -6,7 +6,7 @@ import { useAtom } from "jotai";
 import { createProfileState } from "@/app/atoms";
 
 const isValidLength = (username: string | null): boolean =>
-  !!username && username.length > 0 && username.length <= 20;
+  !!username && username.length > 4 && username.length <= 20;
 
 const fetcher = (url: string, username: string) =>
   fetch(url, {
@@ -36,7 +36,9 @@ export default function useUsernameStatus() {
     message: string;
     status: "good" | "bad";
   }>(
-    debouncedUsername ? [`/api/username/validate`, debouncedUsername] : null,
+    debouncedUsername && debouncedUsername.length > 4
+      ? [`/api/username/validate`, debouncedUsername]
+      : null,
     ([url]) => fetcher(url, debouncedUsername),
     { revalidateOnFocus: false },
   );

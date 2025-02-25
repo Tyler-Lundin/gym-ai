@@ -32,21 +32,12 @@ export const appState = atom<{
 
 export const createProfileState = atom<CreateProfileState>({
   currentStep: 0,
+  lastStep: 0,
   username: "",
   unitSystem: "IMPERIAL",
   experience: "BEGINNER",
   bodyMetrics: { weight: { kg: 0, lb: 0 }, height: { ft: 0, in: 0, cm: 0 } },
   strength: { squat: 0, bench: 0, deadlift: 0 },
-  availability: {
-    sunday: true,
-    monday: true,
-    tuesday: true,
-    wednesday: true,
-    thursday: true,
-    friday: true,
-    saturday: true,
-  },
   pattern: [],
-  preferences: null,
-  readiness: null,
+  preference: "STRENGTH",
 });

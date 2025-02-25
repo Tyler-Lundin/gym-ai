@@ -32,13 +32,12 @@ export interface Availability {
 
 export interface CreateProfileState {
   currentStep: number;
-  username: string | null;
+  lastStep: number;
+  username: string;
   experience: ExperienceLevel;
   strength: Strength;
   bodyMetrics: BodyMetrics;
-  availability: Availability;
   pattern: boolean[];
-  preferences: Preferences | null;
-  readiness: Readiness | null;
-  unitSystem: UnitSystem | null;
+  preference: Preferences;
+  unitSystem: UnitSystem;
 }

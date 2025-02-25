@@ -11,6 +11,10 @@ import {
 } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
 
+import { Roboto } from "next/font/google";
+
+const font = Roboto({ subsets: ["latin"], weight: "300" });
+
 // Define notification types with associated styles/icons
 const notificationTypes = {
   ERROR: { color: "bg-red-500/75", icon: <MdError /> },
@@ -63,7 +67,7 @@ export default function Notifications() {
   const n = notification;
 
   return (
-    <div className="overflow-hidden absolute top-0 right-0 p-3 space-y-2 pointer-events-none z-[500]">
+    <div className="overflow-hidden absolute top-0 right-0 left-0 p-3 space-y-2 pointer-events-none z-[500]">
       <AnimatePresence>
         {n && (
           <NotificationComponent
@@ -92,11 +96,15 @@ function NotificationComponent({
 
   return (
     <Base
-      className={`px-4 py-2 text-black rounded-lg w-fit ${color}`}
+      className={` relative text-black py-1 rounded-lg w-full overflow-hidden justify-items-center ${color}`}
       onClick={onClick}
     >
-      <h1 className="text-2xl font-bold uppercase">{message}</h1>
-      {icon}
+      <span className="grid relative place-items-center m-2 text-3xl text-green-600 bg-black rounded-full aspect-square h-max">
+        {icon}
+      </span>
+      <h1 style={font.style} className="text-2xl font-bold text-left">
+        {message}
+      </h1>
     </Base>
   );
 }
@@ -119,7 +127,7 @@ function Base({
       exit={{ opacity: 0, x: 50, scale: 0.9 }}
       transition={{ duration: 0.18 }}
       whileHover={{ scale: 1.01 }}
-      className={`h-12 z-[101] ${className} pointer-events-auto cursor-pointer flex items-center gap-2`}
+      className={`h-fit z-[101] ${className} pointer-events-auto cursor-pointer flex items-center gap-2`}
     >
       {children}
     </motion.div>

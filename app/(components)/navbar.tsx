@@ -29,7 +29,7 @@ export default function Navbar() {
         <Logo />
       </div>
 
-      <div className="grid absolute right-8 top-1/2 place-content-center bg-green-400 rounded-full shadow scale-125 -translate-y-1/2 p-[2px] shadow-green-700 aspect-square">
+      <div className="grid absolute right-8 top-1/2 place-content-center bg-green-500 rounded-full shadow scale-125 -translate-y-1/2 p-[2px] shadow-green-700 aspect-square">
         <UserButton />
       </div>
     </motion.div>

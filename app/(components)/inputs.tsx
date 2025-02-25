@@ -17,7 +17,7 @@ function Input({ label, toggle, ...props }: InputProps) {
           className="p-2 w-full text-xl rounded-lg border border-black md:text-4xl"
         />
         <span
-          className={`${toggle ? "bg-green-400" : "bg-red-400"} absolute top-2 right-2 rounded-full w-2 h-2 border border-black`}
+          className={`${toggle ? "bg-green-500" : "bg-red-400"} absolute top-2 right-2 rounded-full w-2 h-2 border border-black`}
         />
       </div>
     </label>

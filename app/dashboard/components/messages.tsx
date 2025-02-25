@@ -34,8 +34,8 @@ export default function Messages() {
           onClick={() => setState((state) => ({ ...state, isOpen: true }))}
           className="grid absolute bottom-8 left-1/2 place-content-center h-16 rounded-full z-[500] aspect-square"
         >
-          <motion.div className="rounded-full border border-green-700 shadow transition-all dark:border-green-400 dark:shadow-none hover:scale-125 shadow-black backdrop-blur-sm w-fit h-fit group">
-            <IoIosAdd className="text-6xl text-green-700 rounded-full transition-all dark:text-green-400 group-hover:scale-125" />
+          <motion.div className="rounded-full border border-green-700 shadow transition-all dark:border-green-500 dark:shadow-none hover:scale-125 shadow-black backdrop-blur-sm w-fit h-fit group">
+            <IoIosAdd className="text-6xl text-green-700 rounded-full transition-all dark:text-green-500 group-hover:scale-125" />
           </motion.div>
         </motion.button>
       </AnimatePresence>

@@ -10,25 +10,25 @@ export default function NumberInput({
   value,
   onChangeAction,
 }: NumberInputProps) {
-  const [digits, setDigits] = useState<number[]>([0, 0, 0]); // Hundreds, Tens, Ones
+  const [digits, setDigits] = useState<string[]>(["0", "0", "0"]); // Hundreds, Tens, Ones
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
-  // Sync local state with parent when `value` changes
+  // Sync state with parent value
   useEffect(() => {
-    const num = value.toString().padStart(3, "0").slice(-3);
-    setDigits(num.split("").map(Number));
+    const numStr = value.toString().padStart(3, "0").slice(-3);
+    setDigits(numStr.split(""));
   }, [value]);
 
-  const updateDigits = (newDigits: number[]) => {
+  const updateDigits = (newDigits: string[]) => {
     setDigits(newDigits);
-    onChangeAction(parseInt(newDigits.join(""), 10)); // Convert array to number and send to parent
+    onChangeAction(parseInt(newDigits.join(""), 10)); // Convert array to number
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-    const num = newValue.slice(-3).padStart(3, "0"); // Ensure it's always 3 digits
-    updateDigits(num.split("").map(Number));
+    const numStr = newValue.slice(-3).padStart(3, "0"); // Keep 3 digits
+    updateDigits(numStr.split(""));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -37,19 +37,19 @@ export default function NumberInput({
       const change = e.key === "ArrowUp" ? 1 : -1;
       setDigits((prev) => {
         const newDigits = [...prev];
-        let i = 2; // Start at the last digit (ones place)
+        let i = 2; // Start at ones place
         let carry = change;
 
         while (carry !== 0 && i >= 0) {
-          let newValue = newDigits[i] + carry;
+          let newValue = parseInt(newDigits[i]) + carry;
           if (newValue > 9) {
-            newDigits[i] = 0;
+            newDigits[i] = "0";
             carry = 1;
           } else if (newValue < 0) {
-            newDigits[i] = 9;
+            newDigits[i] = "9";
             carry = -1;
           } else {
-            newDigits[i] = newValue;
+            newDigits[i] = newValue.toString();
             carry = 0;
           }
           i--;
@@ -69,7 +69,9 @@ export default function NumberInput({
       {digits.map((digit, index) => (
         <span
           key={index}
-          className={`p-4 w-16 text-center bg-transparent rounded-lg border border-black/50 dark:border-white/50 ${isFocused && "dark:border-green-500 outline outline-green-400"}`}
+          className={`p-4 transition-all w-16 text-center backdrop-blur-sm bg-white/50 dark:bg-black/50 rounded-lg border border-black/50 dark:border-white/50 ${isFocused &&
+            "dark:border-green-500 text-green-500 outline outline-green-500 bg-white dark:bg-black"
+            }`}
         >
           {digit}
         </span>
@@ -77,15 +79,15 @@ export default function NumberInput({
       {/* Hidden input for typing */}
       <input
         ref={inputRef}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
         type="text"
         inputMode="numeric"
         pattern="[0-9]*"
-        className="overflow-hidden absolute w-16 opacity-0 pointer-events-none"
+        className="absolute w-16 opacity-0 pointer-events-none"
         value={digits.join("")}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
     </div>
   );

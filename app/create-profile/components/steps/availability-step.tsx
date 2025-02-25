@@ -16,7 +16,7 @@ const daysOfWeek = [
   "saturday",
 ] as const;
 
-export default function TrainingAvailabilityStep() {
+export default function AvailabilityStep() {
   const [state, setState] = useAtom(createProfileState);
 
   const toggle = (day: (typeof daysOfWeek)[number]) =>

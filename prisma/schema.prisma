@@ -13,34 +13,48 @@ enum UnitSystem {
   IMPERIAL // feet / inches / lbs
 }
 
+enum Preference {
+  STRENGTH
+  HYPERTROPHY
+  BOTH
+}
+
 model User {
-  // User
-  id        String      @id @unique @default(cuid())
-  authId    String
+  id        String     @id @unique @default(cuid())
+  authId    String     @unique
   username  String
-  email     String?     @unique
-  createdAt DateTime    @default(now())
-  // Settings
-  isInit    Boolean // is initialized or not
-  units     UnitSystem // enum { IMPERIAL or METRIC }
-  // Stats ? - Optional
-  stats     UserStats[]
+  email     String?    @unique
+  createdAt DateTime   @default(now())
+  isInit    Boolean
+  units     UnitSystem
 
-  heightIn Int @default(0)
-  heightFt Int @default(0)
+  // Training Structure
+  scheduleId String?
+  macros     Macrocycle[]
+  mesos      Mesocycle[]
+  micros     Microcycle[]
+  goals      Goal[]
+  notes      Note[]
+  entries    Entry[]
 
-  // Relationships
-  macros   Macrocycle[] // ~ 6 months - groups mesos 
-  mesos    Mesocycle[] /// ~ 8 weeks  - groups micros
-  micros   Microcycle[] // ~ 1 week   - groups workouts
-  goals    Goal[]
-  notes    Note[]
-  metadata Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
-  entries  Entry[]
+  // User Statistics
+  stats    UserStats[]
+  metadata Json? // {"averageRestTime": 60, "mostFrequentExercise": "Squat"}
+  Schedule Schedule?
+}
+
+model Schedule {
+  id         String     @id @default(cuid())
+  userId     String     @unique
+  user       User       @relation(fields: [userId], references: [id])
+  pattern    Boolean[] // [true, true, false, ...] (Training/Rest)
+  preference Preference // Strength, Hypertrophy, Both
+  createdAt  DateTime   @default(now())
+  startDate  DateTime   @default(now())
 }
 
 model UserStats {
-  id            String   @id @unique @default(cuid())
+  id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
   userId        String
   user          User?    @relation(fields: [userId], references: [id])
@@ -50,30 +64,33 @@ model UserStats {
   totalWorkouts Int      @default(0)
   bodyweightLbs Int      @default(0)
   bodyweightKgs Int      @default(0)
-  mood          String
+  heightIn      Int      @default(0)
+  heightFt      Int      @default(0)
+  heightCm      Int      @default(0)
+  mood          String?
 }
 
 model Exercise {
   id              String   @id @default(cuid())
-  name            String // e.g., "Bench Press"
-  categories      String[] // e.g., "Strength", "Cardio"
-  description     String? // e.g., "A compound exercise targeting the chest."
-  musclesTargeted String[] // e.g., ["Chest", "Triceps", "Shoulders"]
-  equipment       String[] // e.g., "Barbell, Dumbbells"
+  name            String
+  categories      String[]
+  description     String?
+  musclesTargeted String[]
+  equipment       String[]
   createdAt       DateTime @default(now())
-  metadata        Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  metadata        Json?
   entries         Entry[]
 }
 
 model Workout {
   id             String     @id @default(cuid())
-  name           String // e.g., "Upper Body Day"
+  name           String
   userId         String
-  entries        Entry[] // Planned exercises for the workout
+  entries        Entry[]
   totalWeight    Float      @default(0)
   totalReps      Int        @default(0)
   totalExercises Int        @default(0)
-  metadata       Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  metadata       Json?
   createdAt      DateTime   @default(now())
   endedAt        DateTime?
   microcycleId   String
@@ -88,43 +105,43 @@ model Entry {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  //optional fields
+  // Optional Fields
   workoutId  String?
   workout    Workout?  @relation(fields: [workoutId], references: [id])
   exerciseId String?
   exercise   Exercise? @relation(fields: [exerciseId], references: [id])
-  sets       Int? // Planned sets
-  reps       Int? // Planned reps
-  weight     Float? // Planned weight
-  duration   Int? // Planned duration (e.g., for cardio)
-  restTime   Int? // Planned rest time between sets (in seconds)
-  metadata   Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  sets       Int?
+  reps       Int?
+  weight     Float?
+  duration   Int?
+  restTime   Int?
+  metadata   Json?
 }
 
 model Macrocycle {
   id          String      @id @default(cuid())
-  name        String // e.g., "12-Week Training Plan"
+  name        String
   userId      String
   user        User        @relation(fields: [userId], references: [id])
   mesocycles  Mesocycle[]
-  description String? // e.g., "Plan focused on strength and hypertrophy."
+  description String?
   startDate   DateTime
   endDate     DateTime?
-  metadata    Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  metadata    Json?
   createdAt   DateTime    @default(now())
 }
 
 model Mesocycle {
   id         String       @id @default(cuid())
-  name       String // e.g., "Hypertrophy Phase"
+  name       String
   userId     String
   user       User         @relation(fields: [userId], references: [id])
   startDate  DateTime
   endDate    DateTime?
   macroId    String?
   macro      Macrocycle?  @relation(fields: [macroId], references: [id])
-  notes      String? // Notes about the cycle
-  metadata   Json? // Data for tracking progress
+  notes      String?
+  metadata   Json?
   Microcycle Microcycle[]
   createdAt  DateTime     @default(now())
 }
@@ -145,11 +162,11 @@ model Goal {
   id          String    @id @default(cuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id])
-  description String // e.g., "Increase 1RM Bench Press by 10%"
+  description String
   endDate     DateTime?
   completed   Boolean   @default(false)
   createdAt   DateTime  @default(now())
-  metadata    Json? // Data for tracking progress or AI integration
+  metadata    Json?
 }
 
 model Note {
@@ -158,5 +175,5 @@ model Note {
   user      User     @relation(fields: [userId], references: [id])
   body      String
   createdAt DateTime @default(now())
-  metadata  Json? // e.g., {"averageRestTime": 60, "mostFrequentExercise": "Squat"} 
+  metadata  Json?
 }
