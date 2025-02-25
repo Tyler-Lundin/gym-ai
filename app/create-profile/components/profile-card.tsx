@@ -124,19 +124,6 @@ export default function ProfileCard() {
           </h6>
         </li>
 
-        {heightUnit && (
-          <li>
-            <h6 className={title}>
-              Height
-              <span className="text-lg font-light" style={smallFont.style}>
-                {bodyMetrics?.height
-                  ? `${bodyMetrics.height} ${heightUnit}`
-                  : "-"}
-              </span>
-            </h6>
-          </li>
-        )}
-
         <li>
           <h6 className={title}>
             Preference

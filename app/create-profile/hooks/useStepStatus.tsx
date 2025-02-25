@@ -10,12 +10,35 @@ import { useEffect, useState } from "react";
 export default function useStepStatus() {
   const [{ currentStep }] = useAtom(createProfileState);
   const [stepStatus, setStepStatus] = useState<boolean>(false);
-  const [stepLoading] = useState<boolean>(false);
-  const { status: usernameStatus } = useUsernameStatus();
+  const [stepLoading, setStepLoading] = useState<boolean>(false);
+  const { status: usernameStatus, isLoading: isUsernameLoading } =
+    useUsernameStatus();
   const experienceStatus = useExperienceStatus();
   const strengthStatus = useStrengthStatus();
   const bodyMetricsStatus = useBodyMetricsStatus();
   const patternStatus = usePatternStatus();
+
+  useEffect(() => {
+    switch (currentStep) {
+      case 0:
+        setStepLoading(isUsernameLoading);
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      case 5:
+        break;
+      case 6:
+        break;
+      default:
+        break;
+    }
+  }, [isUsernameLoading]);
 
   useEffect(() => {
     switch (currentStep) {
