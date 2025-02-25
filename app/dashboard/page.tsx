@@ -7,6 +7,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import ClientDataLoader from "../(components)/client-data-loader";
 import UserStatsComponent from "./components/user-stats";
+import Schedule from "../(components)/schedule";
 
 export default async function Dashboard() {
   const auth = await currentUser();
@@ -15,7 +16,6 @@ export default async function Dashboard() {
   const user = await prisma.user.findFirst({ where: { authId } });
   if (!user) redirect("/create-profile");
   const serializedUser = JSON.stringify(user);
-
   const stats = await prisma.userStats.findFirst({
     where: { userId: user.id },
   });
@@ -29,6 +29,7 @@ export default async function Dashboard() {
           <Navbar />
           <DateSelector />
         </span>
+        <Schedule userId={user.id} />
         <Messages />
         <UserStatsComponent stats={stats} />
       </main>

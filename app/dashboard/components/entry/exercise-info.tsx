@@ -54,7 +54,9 @@ function RepsWeightInfo({
           <p className="flex gap-1 place-items-end p-1 text-right rounded-md border border-white/50 text-md aspect-video">
             {weight}
           </p>
-          <small className="text-xs">{getUnits({ units }).weight}</small>
+          <small className="text-xs">
+            {getUnits({ unitSystem: units }).weight}
+          </small>
         </>
       )}
       {reps && (

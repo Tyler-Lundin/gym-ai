@@ -1,27 +1,30 @@
 import { createProfileState } from "@/app/atoms";
 import { useAtom } from "jotai";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function usePattern() {
   const [{ pattern }, setState] = useAtom(createProfileState);
   const [fullPattern, setFullPattern] = useState<boolean[]>([]);
   const pressedKeys = useRef(new Set<string>()); // Track pressed keys for hold actions
 
-  function addDay(active: boolean) {
-    if (pattern.length >= 30) return;
-    setState((prev) => ({
-      ...prev,
-      pattern: [...prev.pattern, active],
-    }));
-  }
+  const addDay = useCallback(
+    (active: boolean) => {
+      if (pattern.length >= 30) return;
+      setState((prev) => ({
+        ...prev,
+        pattern: [...prev.pattern, active],
+      }));
+    },
+    [pattern, setState],
+  );
 
-  function removeLastDay() {
+  const removeLastDay = useCallback(() => {
     if (pattern.length === 0) return;
     setState((prev) => ({
       ...prev,
       pattern: prev.pattern.slice(0, -1),
     }));
-  }
+  }, [pattern, setState]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -56,7 +59,7 @@ export default function usePattern() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [pattern]); // Dependency ensures `removeLastDay` works with fresh state
+  }, [pattern, removeLastDay, addDay]);
 
   useEffect(() => {
     setFullPattern(

@@ -16,7 +16,7 @@ export default function ClientDataLoader({
   useEffect(() => {
     if (!user) return;
     setApp((app) => ({ ...app, user }));
-  }, []);
+  });
 
   return null;
 }

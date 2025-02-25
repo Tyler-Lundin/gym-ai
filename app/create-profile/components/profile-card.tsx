@@ -1,7 +1,6 @@
 "use client";
 import getUnits from "@/app/dashboard/util/getUnits";
 import { Bebas_Neue, Roboto } from "next/font/google";
-import { UserButton } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import useCreateProfile from "../hooks/useCreateProfile";
 import { Lifts } from "../hooks/useStrength";
@@ -21,19 +20,15 @@ export default function ProfileCard() {
   const {
     experience,
     strength,
-    pattern,
     bodyMetrics,
-    currentStep,
     preference,
     username,
     unitSystem,
   } = state;
 
   const title =
-    " flex justify-between gap-8 text-2xl border-b border-black dark:border-white text-white";
-  const { weight: weightUnit, height: heightUnits } = getUnits({
-    unitSystem: unitSystem,
-  });
+    "flex justify-between gap-8 text-2xl border-b border-black dark:border-white text-white";
+  const { weight: weightUnit, height: heightUnit } = getUnits({ unitSystem });
 
   return (
     <motion.div
@@ -70,7 +65,7 @@ export default function ProfileCard() {
           <h6 className={title}>
             Username
             <span style={smallFont.style} className="font-light">
-              {username ? username : "-"}
+              {username}
             </span>
           </h6>
         </li>
@@ -78,7 +73,7 @@ export default function ProfileCard() {
           <h6 className={title}>
             Experience
             <span className="text-lg font-light" style={smallFont.style}>
-              {experience ? experience.toLowerCase() : "-"}
+              {experience.toLowerCase()}
             </span>
           </h6>
         </li>
@@ -96,13 +91,13 @@ export default function ProfileCard() {
                     {lift.charAt(0).toUpperCase() + lift.slice(1)}:
                   </div>
                   <div className="text-lg">
-                    {strength[lift as Lifts] && strength[lift as Lifts] > 0 ? (
-                      <div>
+                    {strength[lift as Lifts] > 0 ? (
+                      <>
                         {strength[lift as Lifts]}
                         <small>{weightUnit}</small>
-                      </div>
+                      </>
                     ) : (
-                      <>-</>
+                      "-"
                     )}
                   </div>
                 </span>
@@ -115,8 +110,7 @@ export default function ProfileCard() {
           <h6 className={title}>
             Bodyweight
             <span className="text-lg font-light" style={smallFont.style}>
-              {bodyMetrics &&
-                (bodyMetrics.weight.kg || bodyMetrics.weight.lb) ? (
+              {bodyMetrics?.weight?.kg || bodyMetrics?.weight?.lb ? (
                 <>
                   {getUnits({ unitSystem }).weight === "kgs"
                     ? bodyMetrics.weight.kg
@@ -124,11 +118,24 @@ export default function ProfileCard() {
                   {weightUnit}
                 </>
               ) : (
-                <>-</>
+                "-"
               )}
             </span>
           </h6>
         </li>
+
+        {heightUnit && (
+          <li>
+            <h6 className={title}>
+              Height
+              <span className="text-lg font-light" style={smallFont.style}>
+                {bodyMetrics?.height
+                  ? `${bodyMetrics.height} ${heightUnit}`
+                  : "-"}
+              </span>
+            </h6>
+          </li>
+        )}
 
         <li>
           <h6 className={title}>

@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
   const workout = await prisma.workout.findFirst({
     where: {
-      date: {
+      createdAt: {
         gte: startOfDay,
         lte: endOfDay,
       },

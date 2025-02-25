@@ -90,20 +90,6 @@ export async function sendPrompt({
         },
       }),
     );
-
-    if (parsedEntry.data) {
-      const repIncrement = parsedEntry.data.reps;
-      const weightIncrement = parsedEntry.data.weight;
-      updatePromises.push(
-        prisma.user.update({
-          where: { id: userId },
-          data: {
-            totalReps: { increment: repIncrement || undefined },
-            totalWeight: { increment: weightIncrement || undefined },
-          },
-        }),
-      );
-    }
   }
 
   // Execute all update or create operations in parallel

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 export default function useStepStatus() {
   const [{ currentStep }] = useAtom(createProfileState);
   const [stepStatus, setStepStatus] = useState<boolean>(false);
-  const [stepLoading, setStepLoading] = useState<boolean>(false);
+  const [stepLoading] = useState<boolean>(false);
   const { status: usernameStatus } = useUsernameStatus();
   const experienceStatus = useExperienceStatus();
   const strengthStatus = useStrengthStatus();

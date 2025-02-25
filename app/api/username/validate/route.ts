@@ -10,10 +10,7 @@ interface ResBody {
   status: "good" | "bad";
 }
 
-export async function POST(
-  req: NextRequest,
-  res: NextResponse,
-): Promise<NextResponse<ResBody>> {
+export async function POST(req: NextRequest): Promise<NextResponse<ResBody>> {
   const { username } = (await req.json()) as ReqBody;
   if (!username)
     return NextResponse.json({ message: "username required!", status: "bad" });

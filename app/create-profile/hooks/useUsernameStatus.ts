@@ -32,7 +32,7 @@ export default function useUsernameStatus() {
     return () => clearTimeout(handler);
   }, [username]);
 
-  const { data, error, isValidating, isLoading } = useSWR<{
+  const { data, isValidating, isLoading } = useSWR<{
     message: string;
     status: "good" | "bad";
   }>(
@@ -49,7 +49,7 @@ export default function useUsernameStatus() {
       data.message,
       data.status === "good" ? "SUCCESS" : "ERROR",
     );
-  }, [data]);
+  }, [data, sendNotification]);
 
   return {
     status:

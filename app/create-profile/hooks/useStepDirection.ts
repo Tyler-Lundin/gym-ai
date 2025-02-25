@@ -10,7 +10,7 @@ export default function useStepDirection() {
     if (currentStep !== lastStep) {
       setReversed(currentStep < lastStep);
     }
-  }, [currentStep]);
+  }, [currentStep, lastStep]);
 
   return reversed;
 }

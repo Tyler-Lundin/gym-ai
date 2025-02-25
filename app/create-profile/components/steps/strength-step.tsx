@@ -34,7 +34,7 @@ export default function StrengthLevelsStep() {
             </small>
             <NumberInput
               value={strength[lift as Lifts]}
-              onChangeAction={(value) => setStrength(lift as any, value)}
+              onChangeAction={(value) => setStrength(lift as Lifts, value)}
             />
           </span>
         </div>

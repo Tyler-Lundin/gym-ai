@@ -1,16 +1,18 @@
-import { Macrocycle, Mesocycle, Microcycle } from "@prisma/client";
-import { useState } from "react";
+"use server";
 
-interface ScheduleState {
-  macro: Macrocycle;
-  meso: Mesocycle;
-  micro: Microcycle;
-}
+// import { prisma } from "@/libs/prisma";
+// import { currentUser } from "@clerk/nextjs/server";
+// import { redirect } from "next/navigation";
 
-export default function Schedule() {
-  const [schedule, setSchedule] = useState({
-    macrocycle: null,
-  });
-
-  return <div></div>;
+export default async function Schedule({ userId }: { userId: string }) {
+  console.log({ userId });
+  return (
+    <div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  );
 }

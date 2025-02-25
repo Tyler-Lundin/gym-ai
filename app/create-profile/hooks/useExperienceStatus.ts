@@ -1,5 +1,4 @@
 import { createProfileState } from "@/app/atoms";
-import { CreateProfileState } from "@/types/create-profile-state";
 import { useAtom } from "jotai";
 
 export default function useExperienceStatus() {

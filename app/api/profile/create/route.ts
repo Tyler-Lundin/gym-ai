@@ -1,4 +1,4 @@
-import { InitialUserData } from "@/app/create-profile/components/Initialize";
+import { InitialUserData } from "@/app/create-profile/hooks/useCreateProfile";
 import { prisma } from "@/libs/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { User } from "@prisma/client";
@@ -51,7 +51,7 @@ const createNewUser = async (
   authId: string,
   email: string,
 ) => {
-  const { username, height, weight, units } = userData;
+  const { username, units } = userData;
 
   return prisma.user.create({
     data: {
@@ -60,10 +60,6 @@ const createNewUser = async (
       units,
       email,
       isInit: true,
-      height_ft: height.feet || 0,
-      height_in: height.inches || 0,
-      height_cm: height.centimeters || 0,
-      weight: weight || 0,
     },
   });
 };

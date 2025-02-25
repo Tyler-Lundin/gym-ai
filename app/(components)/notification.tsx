@@ -1,6 +1,6 @@
 "use client";
 import { useAtom } from "jotai";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { appState } from "../atoms";
 import {
   MdError,
@@ -60,9 +60,7 @@ export default function Notifications() {
   }, [notification]);
 
   // Handle dismissing notifications
-  const dismissNotification = useCallback((id: string) => {
-    setNotification(null);
-  }, []);
+  const dismissNotification = () => setNotification(null);
 
   const n = notification;
 
@@ -74,7 +72,7 @@ export default function Notifications() {
             key={n.id}
             type={n.type}
             message={n.message}
-            onClick={() => dismissNotification(n.id)}
+            onClick={dismissNotification}
           />
         )}
       </AnimatePresence>

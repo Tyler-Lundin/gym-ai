@@ -20,7 +20,7 @@ export default function ExperienceLevelStep() {
       style={{ ...font.style }}
     >
       <label className="text-2xl font-thin tracking-wide text-left">
-        What's your experience?
+        What&aposs your experience?
       </label>
       <span className="grid gap-8 text-4xl">
         <button

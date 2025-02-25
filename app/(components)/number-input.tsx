@@ -41,7 +41,7 @@ export default function NumberInput({
         let carry = change;
 
         while (carry !== 0 && i >= 0) {
-          let newValue = parseInt(newDigits[i]) + carry;
+          const newValue = parseInt(newDigits[i]) + carry;
           if (newValue > 9) {
             newDigits[i] = "0";
             carry = 1;
@@ -69,9 +69,10 @@ export default function NumberInput({
       {digits.map((digit, index) => (
         <span
           key={index}
-          className={`p-4 transition-all w-16 text-center backdrop-blur-sm bg-white/50 dark:bg-black/50 rounded-lg border border-black/50 dark:border-white/50 ${isFocused &&
+          className={`p-4 transition-all w-16 text-center backdrop-blur-sm bg-white/50 dark:bg-black/50 rounded-lg border border-black/50 dark:border-white/50 ${
+            isFocused &&
             "dark:border-green-500 text-green-500 outline outline-green-500 bg-white dark:bg-black"
-            }`}
+          }`}
         >
           {digit}
         </span>

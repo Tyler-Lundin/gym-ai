@@ -7,7 +7,7 @@ export async function isUsernameTaken(username: string): Promise<boolean> {
   const auth = await currentUser();
   if (!auth) return false;
 
-  const { id: authId, primaryEmailAddress } = auth;
+  const { primaryEmailAddress } = auth;
   const email = primaryEmailAddress?.emailAddress;
   if (!email) return false;
 
