@@ -31,3 +31,34 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.sleek-border {
+  position: relative;
+  padding: 2px; /* Creates the border effect */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Hides overflow from the pseudo-element */
+}
+
+@keyframes spin-border {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.sleek-border::before {
+  content: "";
+  position: absolute;
+  inset: -500px;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    #ff1493,
+    /* Deep Pink */ #ff8c00,
+    /* Dark Orange */ #00ced1,
+    /* Aqua */ #ff1493 /* Repeat */
+  );
+  animation: spin-border 4s linear infinite;
+}
